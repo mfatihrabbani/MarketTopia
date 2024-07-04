@@ -1,6 +1,6 @@
 # ORDERS API SPEC
 
-## Create Orders API
+## Create Checkout API
 Endpoint : `POST /checkouts`
 
 Headers : 
@@ -17,16 +17,17 @@ Response Success Body :
 ```json
 {
     "data" : {
-        "status_checkout" : "success",
-        "status_payment" : "success"
+        "status_checkout" : "SUCCESS",
+        "status_payment" : "SUCCESS"
     }
 }
 ```
+Response Balnace Not Enough Body : 
 ```json
 {
     "data" : {
-        "status_checkout" : "failed",
-        "status_payment" : "unpaid",
+        "status_checkout" : "FAILED_BALANCE_NOT_ENOUGH",
+        "status_payment" : "UNPAID",
         "balance_left" : 1000
     }
 }
