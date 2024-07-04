@@ -28,7 +28,7 @@ Response Success Body :
 }
 ```
 
-Response Success Body :
+Response Failed Body :
 ```json
 {
     "errors" : {
