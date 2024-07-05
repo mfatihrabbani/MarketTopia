@@ -58,7 +58,8 @@ export class StoreService {
         store = await prisma.store.update({
             data : {
                 user_id : user.user_id,
-                name: store.name, 
+                name: store.name,
+                store_name: store.store_name
             },
             where : {
                 user_id : user.user_id

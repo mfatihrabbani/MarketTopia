@@ -8,4 +8,17 @@ export class StoreUtil {
             }
         })
     }
+
+    static async create() {
+        await prisma.store.create({
+            data : {
+                store_id : "123",
+                user_id : "test",
+                name: "teststore", 
+                store_name: "test_store",
+                private_key : "123",
+                is_active: false
+            }
+        })
+    }
 }

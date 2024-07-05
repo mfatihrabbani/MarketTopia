@@ -20,7 +20,7 @@ export class StoreController {
     static async update(req: UserRequest, res: Response, next: NextFunction) {
         try {
             const body = req.body as StoreCreateRequest
-            const response = await StoreService.create(req.user!, body)
+            const response = await StoreService.update(req.user!, body)
             res.status(200).json({
                 data : response
             })

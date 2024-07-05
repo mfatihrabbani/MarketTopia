@@ -65,5 +65,28 @@ describe("POST /stores", () => {
 })
 
 describe("PATCH /stores", () => {
-    
+    beforeAll(async () => {
+        await UserUtil.create()
+        await StoreUtil.create()
+    })
+
+    afterAll(async () => {
+        await StoreUtil.deleteAll()
+        await UserUtil.delete()
+    })
+
+    it("should update store", async () => {
+        const response = await supertest(web)
+            .patch("/stores")
+            .set("Authorization", "token")
+            .send({
+                store_name: "Toko Mangga Besar",
+                name: "ucup111"
+            })
+        
+        console.log(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data.store_name).toBe("Toko Mangga Besar")
+        expect(response.body.data.name).toBe("ucup111")
+    })
 })
