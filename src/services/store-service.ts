@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import prisma from "../apps/database";
-import { StoreCreateRequest, StoreCreateResponse } from "../models/store-model";
+import { StoreCreateRequest, StoreCreateResponse, StoreUpdateRequest, StoreUpdateResponse } from "../models/store-model";
 import { StoreValidation } from "../validations/store-validation";
 import { Validation } from "./validation";
 import { ResponseError } from "../errors/response-error";
@@ -33,6 +33,35 @@ export class StoreService {
                 store_name: store.store_name,
                 private_key : privateKey,
                 is_active: true
+            }
+        })
+
+        return {
+            store_name : store.store_name,
+            name: store.name
+        }
+    }
+
+    static async update(user: User, store: StoreUpdateRequest):Promise<StoreUpdateResponse> {
+        store = Validation.validate(StoreValidation.UPDATE, store)
+
+        const isStoreExist = await prisma.store.findFirst({
+            where: {
+                user_id: user.user_id
+            }
+        })
+
+        if(!isStoreExist) {
+            throw new ResponseError(404, "You don't have store")
+        }
+
+        store = await prisma.store.update({
+            data : {
+                user_id : user.user_id,
+                name: store.name, 
+            },
+            where : {
+                user_id : user.user_id
             }
         })
 
