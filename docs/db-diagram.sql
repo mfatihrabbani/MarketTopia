@@ -52,7 +52,7 @@ table products {
 
 table types_stock {
   type_id number
-  name_type string
+  type_stock_name string
 }
 
 table stock_products {
