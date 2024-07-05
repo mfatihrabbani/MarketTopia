@@ -43,9 +43,9 @@ model Store {
   user_id String @db.VarChar(100) 
   store_name String @db.VarChar(100)
   name String @db.VarChar(100)
-  world_deposit String @db.VarChar(100)
-  bot_deposit String @db.VarChar(100)
-  last_update_bot String @db.VarChar(100)
+  world_deposit String? @db.VarChar(100)
+  bot_deposit String? @db.VarChar(100)
+  last_update_bot String? @db.VarChar(100)
   is_active Boolean @db.TinyInt()
   private_key String @db.VarChar(100)
 

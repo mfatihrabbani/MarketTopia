@@ -67,6 +67,15 @@ export class UserService {
                     token : access_token,
                 }
             })
+        }else {
+            await prisma.user.update({
+                data : {
+                    token : access_token
+                },
+                where : {
+                    user_id: user.data.id
+                }
+            })
         }
 
         return access_token
