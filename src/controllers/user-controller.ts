@@ -16,6 +16,11 @@ export class UserController {
         try {
             const code = req.query.code as string
             const token = await UserService.callbackDiscordLogin(code)
+            res.status(200).json({
+                data: {
+                    token
+                }
+            })
         }catch(error) {
             next(error)
         }

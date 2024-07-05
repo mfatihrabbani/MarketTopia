@@ -12,6 +12,7 @@ export const errorMiddleware = (error:ErrorRequestHandler , req: Request, res: R
             errors : error.message
         })
     }else {
+        console.log(error)
         res.status(500).json({
             errors : "Internal Error"
         })
