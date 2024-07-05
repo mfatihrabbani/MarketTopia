@@ -71,4 +71,13 @@ export class StoreService {
             name: store.name
         }
     }
+
+    static async getStoreIdByUserId(userId: string):Promise<string> {
+        const storeId = await prisma.store.findFirst({
+            where : {
+                user_id: userId
+            }
+        })
+        return storeId!.store_id
+    }
 }
