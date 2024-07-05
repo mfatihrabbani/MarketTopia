@@ -23,6 +23,8 @@ model User {
 
   role Role @relation(fields: [role_id], references: [role_id])
   store Store?
+  user_item UserItem[]
+  order Order[]
 
   @@map("users")
 }
@@ -49,6 +51,7 @@ model Store {
 
   user User @relation(fields: [store_id], references: [user_id])
   product Product[]
+  order Order[]
 
   @@map("stores")
 }
@@ -66,7 +69,7 @@ model Product {
   product_id String @db.VarChar(100) @id
   store_id String @db.VarChar(100) 
   product_name String @db.VarChar(100) 
-  product_description String @db.VarChar(100) 
+  product_description String @db.VarChar(200) 
   category_id String @db.VarChar(100) 
   payment_method String @db.VarChar(100) 
   total_sold Int @db.Int() @default(0)
@@ -76,6 +79,8 @@ model Product {
 
   category Category @relation(fields: [category_id], references: [category_id])
   store Store @relation(fields: [store_id], references: [store_id])
+  stock StockProduct[]
+  order Order[]
 
   @@map("products")
 }
@@ -91,7 +96,9 @@ model TypesStock {
   type_id Int @id
   type_stock_name String
 
+  stock_product StockProduct[]
 
+  @@map("types_stock")
 }
 
 model StockProduct {
@@ -101,4 +108,67 @@ model StockProduct {
   data String
   file_url String?
   is_sold Boolean 
+
+  type_stock TypesStock @relation(fields: [type_id], references: [type_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+  user_item UserItem[]
+
+  @@map("stock_products")
+}
+
+model UserItem {
+  user_item_id String @id
+  user_id String
+  order_id String
+  stock_id String 
+
+  user User @relation(fields: [user_id], references: [user_id])
+  stock StockProduct @relation(fields: [stock_id], references: [stock_id])
+
+  @@map("user_items")
+}
+
+model TypeStatus {
+  type_id Int @id
+  type_status_name String
+
+  order Order[]
+}
+
+model Order {
+  order_id String @id
+  user_id String
+  store_id String
+  product_id String
+  price Int
+  order_date DateTime
+  status Int
+
+  user User @relation(fields: [user_id], references: [user_id])
+  store Store @relation(fields: [store_id], references: [store_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+  status_type TypeStatus @relation(fields: [status], references: [type_id] )
+
+  order_item OrderItem[]
+  transaction Transaction?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  order_item_id String @id
+  order_id String
+  amount Int
+  total_price Int
+
+  order Order @relation(fields: [order_id], references: [order_id])
+
+  @@map("order_items")
+}
+
+model Transaction {
+  transaction_id String @id
+  order_id String @unique
+
+  order Order @relation(fields: [order_id], references: [order_id])
 }

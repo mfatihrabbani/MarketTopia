@@ -71,6 +71,11 @@ table user_items {
   stock_id string [ref: > stock_products.stock_id]
 }
 
+table types_status {
+  type_id number [pk]
+  type_status_name string 
+}
+
 table orders {
   order_id string [pk]
   user_id string [ref: > users.id]
@@ -78,13 +83,13 @@ table orders {
   product_id string [ref: > products.product_id]
   price number
   order_date date
-  status string
+  status string [ref: > types_status.type_id]
 }
 
 table order_items {
   order_item_id string [pk]
   order_id string [ref: > orders.order_id]
-  amount string
+  amount number
   total_price number
 }
 
