@@ -10,6 +10,9 @@ export class StoreService {
     static async create(user: User, store: StoreCreateRequest):Promise<StoreCreateResponse> {
         store = Validation.validate(StoreValidation.CREATE, store)
 
+        console.log("Users", user)
+
+
         const isStoreExist = await prisma.store.findFirst({
             where: {
                 user_id: user.user_id
@@ -35,7 +38,7 @@ export class StoreService {
 
         return {
             store_name : store.store_name,
-            name: store.store_name
+            name: store.name
         }
     }
 }

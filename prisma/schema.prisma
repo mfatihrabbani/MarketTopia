@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  user_id String @db.VarChar(100) @id
+  user_id String @db.VarChar(100) @id @unique
   username String @db.VarChar(100)
   avatar String @db.VarChar(100)
   role_id Int @db.Int() @default(1)
@@ -40,7 +40,7 @@ model Role {
 
 model Store {
   store_id String @db.VarChar(100) @id
-  user_id String @db.VarChar(100) 
+  user_id String @db.VarChar(100) @unique
   store_name String @db.VarChar(100)
   name String @db.VarChar(100)
   world_deposit String? @db.VarChar(100)
@@ -49,7 +49,7 @@ model Store {
   is_active Boolean @db.TinyInt()
   private_key String @db.VarChar(100)
 
-  user User @relation(fields: [store_id], references: [user_id])
+  user User @relation(fields: [user_id], references: [user_id])
   product Product[]
   order Order[]
 

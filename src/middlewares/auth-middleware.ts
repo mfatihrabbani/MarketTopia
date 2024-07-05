@@ -5,17 +5,17 @@ import { User } from "@prisma/client";
 
 export class AuthMiddleware {
     static async user(req: UserRequest, res: Response, next: NextFunction) {
-        const token = req.get("token")
+        const token = req.get("Authorization")
 
         const user = await prisma.user.findFirst({
             where : {
                 token: token
             }
         })
-
         if(user){
             req.user = user as User
             next()
+            return
         }
 
         res.status(404).json({
