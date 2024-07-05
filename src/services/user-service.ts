@@ -1,6 +1,8 @@
 import dotenv from "dotenv"
 import querystring from "querystring"
 import axios from "axios"
+import prisma from "../apps/database"
+import { ResponseError } from "../errors/response-error"
 
 dotenv.config()
 export class UserService {
@@ -33,12 +35,33 @@ export class UserService {
 
         const {access_token} = response.data
 
-        const user = await axios.get('https://discord.com/api/users/@me', {
+        let user = await axios.get('https://discord.com/api/users/@me', {
             headers : {
                 Authorization : `Bearer ${response.data}`
             }
         })
 
-        return "TOKEN"
+        if(!user.data){
+            throw new ResponseError(404, "Something wrong with discord Oauth")
+        }
+
+        const isUserExist = await prisma.user.findFirst({
+            where : {
+                user_id : user.data.id
+            }
+        })
+
+        if(!isUserExist){
+            await prisma.user.create({
+                data : {
+                    user_id : user.data.id,
+                    username : user.data.username,
+                    avatar : user.data.avatar,
+                    token : access_token,
+                }
+            })
+        }
+
+        return access_token
     }
 }
