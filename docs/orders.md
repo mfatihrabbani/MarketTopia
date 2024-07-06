@@ -19,10 +19,11 @@ Response Success Body :
 ```json
 {
     "data" : {
+        "order_id" : "111",
         "store_id" : "10293847655643728",
         "product_id" : "0190191019101",
         "amount" : 100,
-        "price" : 100000,
+        "total_price" : 100000,
         "status" : "UNPAID"
     }
 }

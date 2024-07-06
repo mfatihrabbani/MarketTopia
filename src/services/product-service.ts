@@ -5,7 +5,7 @@ import { ProductValidation } from "../validations/product-validation";
 import prisma from "../apps/database";
 import { StoreService } from "./store-service";
 import { ResponseError } from "../errors/response-error";
-import {v4 as uuid, validate} from "uuid";
+import {v4 as uuid} from "uuid";
 
 
 export class ProductService {
@@ -151,7 +151,12 @@ export class ProductService {
         const productWithStock = await Promise.all(products.map(async (product) => {
             const totalStock = await prisma.stockProduct.count({
                 where: {
-                    product_id: product.product_id
+                    product_id: product.product_id,
+                    AND : [
+                        {
+                            is_sold: false
+                        }
+                    ]
                 }
             })
 
@@ -217,7 +222,12 @@ export class ProductService {
 
         const totalStock = await prisma.stockProduct.count({
             where: {
-                product_id: productId
+                product_id: productId,
+                AND : [
+                    {
+                        is_sold: false
+                    }
+                ]
             }
         })
 
@@ -259,7 +269,12 @@ export class ProductService {
         const productWithStock = await Promise.all(products.map(async(product)=> {
             const totalStock = await prisma.stockProduct.count({
                 where: {
-                    product_id: product.product_id
+                    product_id: product.product_id,
+                    AND : [
+                        {
+                            is_sold: false
+                        }
+                    ]
                 }
             })
 
