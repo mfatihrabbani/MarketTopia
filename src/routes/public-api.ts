@@ -7,6 +7,7 @@ const publicRouter = express.Router()
 publicRouter.get("/auth/login", UserController.loginDiscord)
 publicRouter.get("/auth/callback", UserController.callbackDiscordLogin)
 
+publicRouter.get("/products/:productId", ProductController.getById)
 publicRouter.get("/products", ProductController.get)
 
 export default publicRouter

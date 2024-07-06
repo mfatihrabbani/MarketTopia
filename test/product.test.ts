@@ -187,3 +187,40 @@ describe("DELETE /products", () => {
         
     })
 })
+
+describe("GET /products/:productId", () => {
+
+    beforeEach(async () => {
+        await UserUtil.create()
+        await StoreUtil.create()
+        await ProductUtil.create()
+    })
+    
+    afterEach(async () => {
+        await ProductUtil.delete()
+        await StoreUtil.deleteAll()
+        await UserUtil.delete()
+    })
+
+    it("should get product by id", async () => {
+        const response = await supertest(web)
+            .get("/products/1234test")
+        console.log(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data.image_url).toBe("test")
+        expect(response.body.data.product_id).toBe("1234test")
+        expect(response.body.data.product_name).toBe("test_product")
+        expect(response.body.data.product_description).toBeDefined()
+        expect(response.body.data.total_sold).toBeDefined()
+        expect(response.body.data.price).toBeDefined()
+        expect(response.body.data.total_stock).toBeDefined()
+    })
+
+    it("should failed not found get product by id", async () => {
+        const response = await supertest(web)
+            .get("/products/1234tesnotfound")
+        console.log(response.body)
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+})

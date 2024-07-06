@@ -33,7 +33,7 @@ export class AuthMiddleware {
         })
 
         if(!user){
-            res.status(404).json({
+            return res.status(404).json({
                 message : "Unauthorized"
             })
         }
@@ -43,8 +43,8 @@ export class AuthMiddleware {
             }
         })
         if(!existStore){
-            res.status(404).json({
-                message: "Pleace make a store first"
+            return res.status(404).json({
+                message: "Please make a store first"
             })
         }
         req.user = user as User

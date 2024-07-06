@@ -21,4 +21,6 @@ export class ProductValidation {
     static DELETE: ZodType = z.object({
         product_id: z.string().min(1)
     })
+
+    static GETBYID: ZodType = z.string().min(1)
 }

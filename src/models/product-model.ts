@@ -57,3 +57,5 @@ export type ProductDeleteRequest = {
 export type ProductDeleteResponse = {
     message: string;
 }
+
+export type GetProductParams = string

@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { ObjectValidateProductReq, ProductCreateRequest, ProductDeleteRequest, ProductDeleteResponse, ProductGetResponse, ProductUpdateRequest, ProductUpdateResponse, QueryParamsGetAll } from "../models/product-model";
+import { GetProductParams, ObjectValidateProductReq, ProductCreateRequest, ProductDeleteRequest, ProductDeleteResponse, ProductGetResponse, ProductUpdateRequest, ProductUpdateResponse, QueryParamsGetAll } from "../models/product-model";
 import { Validation } from "./validation";
 import { ProductValidation } from "../validations/product-validation";
 import prisma from "../apps/database";
@@ -100,6 +100,10 @@ export class ProductService {
             throw new ResponseError(404, "Product not found")
         }
 
+        if(existProduct?.is_delete){
+            throw new ResponseError(404, "Product has been deleted")
+        }
+
         const storeId = await this.basicValidate(user, {
             category_id: product.category_id,
             payment_method: product.payment_method,
@@ -178,6 +182,10 @@ export class ProductService {
             throw new ResponseError(404, "Product not found")
         }
 
+        if(existProduct?.is_delete){
+            throw new ResponseError(404, "Product has been deleted")
+        }
+
         await prisma.product.update({
             data : {
                 is_delete : true
@@ -190,6 +198,37 @@ export class ProductService {
         return {
             message : "Success delete product"
         }
+    }
 
+    static async getById(productId: GetProductParams):Promise<ProductGetResponse> {
+        productId = Validation.validate(ProductValidation.GETBYID, productId)
+
+        console.log("PASS SERVICE")
+
+        const existProduct = await prisma.product.findFirst({
+            where : {
+                product_id: productId
+            }
+        })
+
+        if(!existProduct){
+            throw new ResponseError(404, "Product not found")
+        }
+
+        const totalStock = await prisma.stockProduct.count({
+            where: {
+                product_id: productId
+            }
+        })
+
+        return {
+            image_url : existProduct.image_url,
+            product_id: existProduct.product_id,
+            product_name: existProduct.product_name,
+            product_description: existProduct.product_description,
+            total_sold: existProduct.total_sold,
+            price: existProduct.price,
+            total_stock : totalStock || 0
+        }
     }
 }
