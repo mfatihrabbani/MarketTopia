@@ -113,3 +113,27 @@ describe("PATCH /products", () => {
         expect(response.body.errors).toBeDefined()
     })
 })
+
+describe("PATCH /products", () => {
+
+    beforeEach(async () => {
+        await UserUtil.create()
+        await StoreUtil.create()
+        await ProductUtil.create()
+    })
+    
+    afterEach(async () => {
+        await ProductUtil.delete()
+        await StoreUtil.deleteAll()
+        await UserUtil.delete()
+    })
+
+    it("should get products", async () => {
+        const response = await supertest(web)
+            .get("/products?most_sold=true")
+
+        console.log(response.body)
+        expect(response.status).toBe(200)
+    })
+
+})

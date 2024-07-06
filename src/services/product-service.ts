@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { ObjectValidateProductReq, ProductCreateRequest, ProductUpdateRequest, ProductUpdateResponse } from "../models/product-model";
+import { ObjectValidateProductReq, ProductCreateRequest, ProductGetResponse, ProductUpdateRequest, ProductUpdateResponse, QueryParamsGetAll } from "../models/product-model";
 import { Validation } from "./validation";
 import { ProductValidation } from "../validations/product-validation";
 import prisma from "../apps/database";
@@ -128,5 +128,41 @@ export class ProductService {
             is_active: newProduct.is_active,
             image_url: newProduct.image_url,
         }
+    }
+
+    static async getAll(query: QueryParamsGetAll):Promise<ProductGetResponse[]>{
+        const filters: any = {}
+        if(query.most_sold){
+            filters.orderBy = {
+                total_sold: "desc"
+            }
+        }
+
+        const products = await prisma.product.findMany({
+            orderBy : {
+                total_sold : "desc"
+            },
+            take: query.size
+        })
+
+        const productWithStock = await Promise.all(products.map(async (product) => {
+            const totalStock = await prisma.stockProduct.count({
+                where: {
+                    product_id: product.product_id
+                }
+            })
+
+            return {
+                image_url : product.image_url,
+                product_id: product.product_id,
+                product_name: product.product_name,
+                product_description: product.product_description,
+                total_sold: product.total_sold,
+                price: product.price,
+                total_stock : totalStock || 0
+            }
+        }))
+
+        return productWithStock
     }
 }
