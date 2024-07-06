@@ -9,5 +9,6 @@ publicRouter.get("/auth/callback", UserController.callbackDiscordLogin)
 
 publicRouter.get("/products/:productId", ProductController.getById)
 publicRouter.get("/products", ProductController.get)
+publicRouter.get("/stores/:storeId/products", ProductController.getByStore)
 
 export default publicRouter

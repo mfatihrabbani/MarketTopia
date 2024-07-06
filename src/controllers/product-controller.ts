@@ -68,4 +68,16 @@ export class ProductController {
             next(error)
         }
     }
+
+    static async getByStore(req: Request, res: Response, next: NextFunction) {
+        try {
+            const params = req.params.storeId
+            const response = await ProductService.getByStore(params)
+            res.status(200).json({
+                data: response
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
 }

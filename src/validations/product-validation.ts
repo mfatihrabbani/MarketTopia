@@ -23,4 +23,6 @@ export class ProductValidation {
     })
 
     static GETBYID: ZodType = z.string().min(1)
+
+    static GETBYSTORE: ZodType = z.string().min(1)
 }

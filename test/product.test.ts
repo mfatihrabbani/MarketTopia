@@ -224,3 +224,40 @@ describe("GET /products/:productId", () => {
         expect(response.body.errors).toBeDefined()
     })
 })
+
+describe("GET /stores/:storeId/products", () => {
+
+    beforeEach(async () => {
+        await UserUtil.create()
+        await StoreUtil.create()
+        await ProductUtil.create()
+    })
+    
+    afterEach(async () => {
+        await ProductUtil.delete()
+        await StoreUtil.deleteAll()
+        await UserUtil.delete()
+    })
+
+    it("should get product by store id", async () => {
+        const response = await supertest(web)
+            .get("/stores/123/products")
+        console.log(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data[0].image_url).toBe("test")
+        expect(response.body.data[0].product_id).toBe("1234test")
+        expect(response.body.data[0].product_name).toBe("test_product")
+        expect(response.body.data[0].product_description).toBeDefined()
+        expect(response.body.data[0].total_sold).toBeDefined()
+        expect(response.body.data[0].price).toBeDefined()
+        expect(response.body.data[0].total_stock).toBeDefined()
+    })
+
+    it("should get product by store id", async () => {
+        const response = await supertest(web)
+            .get("/stores/1213/products")
+        console.log(response.body)
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+})

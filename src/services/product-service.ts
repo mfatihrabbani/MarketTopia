@@ -231,4 +231,49 @@ export class ProductService {
             total_stock : totalStock || 0
         }
     }
+
+    static async getByStore(storeId: GetProductParams):Promise<ProductGetResponse[]> {
+        storeId = Validation.validate(ProductValidation.GETBYSTORE, storeId)
+
+        const existStore = await prisma.store.findFirst({
+            where: {
+                store_id : storeId
+            }
+        })
+
+        if(!existStore){
+            throw new ResponseError(404, "Store not found")
+        }
+
+        const products = await prisma.product.findMany({
+            where: {
+                store_id : storeId,
+                AND : [
+                    {
+                        is_delete : false
+                    }
+                ]
+            }
+        })
+
+        const productWithStock = await Promise.all(products.map(async(product)=> {
+            const totalStock = await prisma.stockProduct.count({
+                where: {
+                    product_id: product.product_id
+                }
+            })
+
+            return {
+                image_url : product.image_url,
+                product_id: product.product_id,
+                product_name: product.product_name,
+                product_description: product.product_description,
+                total_sold: product.total_sold,
+                price: product.price,
+                total_stock : totalStock || 0
+            }
+        }))
+
+        return productWithStock
+    }
 }

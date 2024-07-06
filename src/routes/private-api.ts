@@ -8,8 +8,4 @@ privateRouter.use(AuthMiddleware.user)
 
 privateRouter.post("/stores", StoreController.create)
 
-
-
-
-
 export default privateRouter
