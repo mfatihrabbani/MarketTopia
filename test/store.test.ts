@@ -26,7 +26,6 @@ describe("POST /stores", () => {
         expect(response.status).toBe(200)
         expect(response.body.data.store_name).toBe("Toko Mangga Besar")
         expect(response.body.data.name).toBe("ucup111")
-        
     })
 
     it("should failed store user", async () => {
@@ -44,14 +43,6 @@ describe("POST /stores", () => {
 
     it("should failed create double store", async () => {
         let response = await supertest(web)
-            .post("/stores")
-            .set("Authorization", "token")
-            .send({
-                store_name: "Toko Mangga Besar",
-                name: "ucup111"
-            })
-
-        response = await supertest(web)
             .post("/stores")
             .set("Authorization", "token")
             .send({
