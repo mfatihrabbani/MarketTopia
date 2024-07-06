@@ -50,3 +50,10 @@ export type ProductGetResponse = {
     total_sold: number;
     price: number;
 }
+
+export type ProductDeleteRequest = {
+    product_id: string;
+}
+export type ProductDeleteResponse = {
+    message: string;
+}

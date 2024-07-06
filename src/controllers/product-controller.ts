@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import { UserRequest } from "../models/users-model";
-import { ProductCreateRequest, ProductUpdateRequest, QueryParamsGetAll } from "../models/product-model";
+import { ProductCreateRequest, ProductDeleteRequest, ProductUpdateRequest, QueryParamsGetAll } from "../models/product-model";
 import { ProductService } from "../services/product-service";
 
 export class ProductController {
@@ -36,6 +36,18 @@ export class ProductController {
                 news: req.query.news ? Boolean(req.query.news) : true
             } as QueryParamsGetAll
             const response = await ProductService.getAll(query)
+            res.status(200).json({
+                data: response
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async delete(req: UserRequest, res: Response, next: NextFunction) {
+        try {
+            const product = req.body as ProductDeleteRequest
+            const response = await ProductService.delete(req.user!, product)
             res.status(200).json({
                 data: response
             })

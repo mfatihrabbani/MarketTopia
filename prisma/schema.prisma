@@ -76,6 +76,8 @@ model Product {
   image_url String @db.VarChar(100) 
   price Int
   is_active Boolean
+  is_delete Boolean
+  deleted_at DateTime?
 
   category Category @relation(fields: [category_id], references: [category_id])
   store Store @relation(fields: [store_id], references: [store_id])

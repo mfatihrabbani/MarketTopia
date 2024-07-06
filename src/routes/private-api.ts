@@ -7,10 +7,9 @@ const privateRouter = express.Router()
 privateRouter.use(AuthMiddleware.user)
 
 privateRouter.post("/stores", StoreController.create)
-privateRouter.patch("/stores", StoreController.update)
 
-privateRouter.post("/products", ProductController.create)
-privateRouter.patch("/products", ProductController.update)
+
+
 
 
 export default privateRouter

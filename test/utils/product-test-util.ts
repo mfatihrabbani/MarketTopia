@@ -21,7 +21,8 @@ export class ProductUtil {
                 price: 1000,
                 is_active: true,
                 total_sold: 0,
-                image_url: "test"
+                image_url: "test",
+                is_delete: false
             }
         })
     }

@@ -17,4 +17,8 @@ export class ProductValidation {
         payment_method: z.string().min(1),
         price: z.number()
     })
+
+    static DELETE: ZodType = z.object({
+        product_id: z.string().min(1)
+    })
 }

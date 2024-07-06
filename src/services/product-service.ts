@@ -1,11 +1,11 @@
 import { User } from "@prisma/client";
-import { ObjectValidateProductReq, ProductCreateRequest, ProductGetResponse, ProductUpdateRequest, ProductUpdateResponse, QueryParamsGetAll } from "../models/product-model";
+import { ObjectValidateProductReq, ProductCreateRequest, ProductDeleteRequest, ProductDeleteResponse, ProductGetResponse, ProductUpdateRequest, ProductUpdateResponse, QueryParamsGetAll } from "../models/product-model";
 import { Validation } from "./validation";
 import { ProductValidation } from "../validations/product-validation";
 import prisma from "../apps/database";
 import { StoreService } from "./store-service";
 import { ResponseError } from "../errors/response-error";
-import {v4 as uuid} from "uuid";
+import {v4 as uuid, validate} from "uuid";
 
 
 export class ProductService {
@@ -70,6 +70,7 @@ export class ProductService {
                 price: product.price,
                 total_sold: 0,
                 is_active: true,
+                is_delete: false,
                 image_url: `${process.env.PATH_PUBLIC_FILE}/default.png`
             }
         })
@@ -139,9 +140,7 @@ export class ProductService {
         }
 
         const products = await prisma.product.findMany({
-            orderBy : {
-                total_sold : "desc"
-            },
+            orderBy : filters.orderBy,
             take: query.size
         })
 
@@ -164,5 +163,33 @@ export class ProductService {
         }))
 
         return productWithStock
+    }
+
+    static async delete(user:User, product:ProductDeleteRequest):Promise<ProductDeleteResponse> {
+        product = Validation.validate(ProductValidation.DELETE, product)
+
+        const existProduct = await prisma.product.findFirst({
+            where : {
+                product_id: product.product_id
+            }
+        })
+
+        if(!existProduct){
+            throw new ResponseError(404, "Product not found")
+        }
+
+        await prisma.product.update({
+            data : {
+                is_delete : true
+            },
+            where : {
+                product_id: product.product_id
+            }
+        })
+
+        return {
+            message : "Success delete product"
+        }
+
     }
 }

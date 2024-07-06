@@ -3,6 +3,7 @@ import { ProductUtil } from "./utils/product-test-util"
 import { StoreUtil } from "./utils/store-test-util"
 import { UserUtil } from "./utils/user-test-utils"
 import { web } from "../src/apps/web"
+import prisma from "../src/apps/database"
 
 describe("POST /products", () => {
     beforeAll(async () => {
@@ -114,7 +115,7 @@ describe("PATCH /products", () => {
     })
 })
 
-describe("PATCH /products", () => {
+describe("GET /products", () => {
 
     beforeEach(async () => {
         await UserUtil.create()
@@ -135,5 +136,54 @@ describe("PATCH /products", () => {
         console.log(response.body)
         expect(response.status).toBe(200)
     })
+})
 
+describe("DELETE /products", () => {
+
+    beforeEach(async () => {
+        await UserUtil.create()
+        await StoreUtil.create()
+        await ProductUtil.create()
+    })
+    
+    afterEach(async () => {
+        await ProductUtil.delete()
+        await StoreUtil.deleteAll()
+        await UserUtil.delete()
+    })
+
+    it("should delete product", async () => {
+        const response = await supertest(web)
+            .delete("/products")
+            .set("Authorization", "token")
+            .send({
+                product_id: "1234test",
+            })
+
+        const statusProduct = await prisma.product.findFirst({
+            where: {
+                product_id: "1234test"
+            }
+        })
+        
+        console.log(response.body)
+        expect(statusProduct?.is_delete).toBe(true)
+        expect(response.status).toBe(200)
+        
+    })
+
+
+    it("should delete product not found", async () => {
+        const response = await supertest(web)
+            .delete("/products")
+            .set("Authorization", "token")
+            .send({
+                product_id: "asdsadsa",
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+        
+    })
 })
