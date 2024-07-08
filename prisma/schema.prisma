@@ -25,6 +25,7 @@ model User {
   store Store?
   user_item UserItem[]
   order Order[]
+  balance_user BalanceUser[]
 
   @@map("users")
 }
@@ -176,4 +177,15 @@ model Transaction {
   order_id String @unique
 
   order Order @relation(fields: [order_id], references: [order_id])
+}
+
+model BalanceUser {
+  balance_user_id String @id
+  user_id String
+  store_id String
+  balance Int
+
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@map("balances_user")
 }

@@ -6,4 +6,7 @@ export class OrderValidation {
     product_id: z.string().min(1),
     amount: z.number().positive(),
   });
+  static CHECKOUT: ZodType = z.object({
+    order_id: z.string().min(1),
+  });
 }

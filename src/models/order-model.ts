@@ -25,3 +25,13 @@ export type GetOrderResponse = {
   status?: string;
   product?: ProductGetResponse;
 };
+
+export type CheckoutRequest = {
+  order_id: string;
+};
+
+export type CheckoutResponse = {
+  status_checkout: string;
+  status_payment: string;
+  balance_left: number;
+};

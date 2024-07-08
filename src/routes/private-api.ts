@@ -14,4 +14,6 @@ privateRouter.get("/orders", OrderController.getByUser);
 
 privateRouter.patch("/users/deposits", UserController.updateDepositGrowid);
 
+privateRouter.post("/checkouts", OrderController.checkout);
+
 export default privateRouter;

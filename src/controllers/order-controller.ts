@@ -26,4 +26,15 @@ export class OrderController {
       next(error);
     }
   }
+
+  static async checkout(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const response = await OrderService.checkout(req.user!, req.body);
+      res.status(200).send({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

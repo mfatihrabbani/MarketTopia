@@ -5,6 +5,8 @@ import {
   CreateOrderRequest,
   GetOrderResponse,
   CreateOrderResponse,
+  CheckoutRequest,
+  CheckoutResponse,
 } from "../models/order-model";
 import { OrderValidation } from "../validations/order-validation";
 import { Validation } from "./validation";
@@ -139,5 +141,142 @@ export class OrderService {
         };
       })
     );
+  }
+
+  static async checkout(
+    users: User,
+    order: CheckoutRequest
+  ): Promise<CheckoutResponse> {
+    order = Validation.validate(OrderValidation.CHECKOUT, order);
+
+    const existOrder = await prisma.order.findFirst({
+      where: {
+        order_id: order.order_id,
+      },
+    });
+
+    if (!existOrder) {
+      throw new ResponseError(404, "Order not found");
+    }
+
+    const product = await prisma.product.findFirst({
+      where: {
+        product_id: existOrder.product_id,
+      },
+    });
+
+    if (!product) {
+      throw new ResponseError(404, "Product not found");
+    }
+
+    const amountProduct = await prisma.orderItem.findFirst({
+      where: {
+        AND: [
+          {
+            product_id: existOrder.product_id,
+          },
+          {
+            order_id: existOrder.order_id,
+          },
+        ],
+      },
+    });
+
+    if (!amountProduct) {
+      throw new ResponseError(404, "Order item not found");
+    }
+
+    const userBalance = await prisma.balanceUser.findFirst({
+      where: {
+        AND: [
+          {
+            user_id: users.user_id,
+          },
+          {
+            store_id: product.store_id,
+          },
+        ],
+      },
+    });
+
+    if (userBalance?.balance || 0 < amountProduct.amount * product.price) {
+      throw new ResponseError(400, "Your balance not enough");
+    }
+
+    prisma.$transaction(async () => {
+      const user = await prisma.balanceUser.update({
+        data: {
+          balance: {
+            decrement: amountProduct.amount * product.price,
+          },
+        },
+        where: {
+          balance_user_id: userBalance?.balance_user_id,
+        },
+      });
+
+      const tempoStockUser = await prisma.stockProduct.findMany({
+        where: {
+          AND: [
+            {
+              product_id: product.product_id,
+            },
+            {
+              is_sold: false,
+            },
+          ],
+        },
+        take: amountProduct.amount,
+      });
+
+      const stockUser = await Promise.all(
+        tempoStockUser.map(async (stock) => {
+          const updateStock = await prisma.userItem.create({
+            data: {
+              user_item_id: uuid(),
+              user_id: user.user_id,
+              stock_id: stock.stock_id,
+              order_id: order.order_id,
+            },
+          });
+          const soldStock = await prisma.stockProduct.update({
+            data: {
+              is_sold: true,
+            },
+            where: {
+              stock_id: stock.stock_id,
+            },
+          });
+        })
+      );
+
+      await prisma.order.update({
+        data: {
+          status: 2,
+        },
+        where: {
+          order_id: order.order_id,
+        },
+      });
+    });
+
+    const currentBalance = await prisma.balanceUser.findFirst({
+      where: {
+        AND: [
+          {
+            user_id: users.user_id,
+          },
+          {
+            store_id: product.store_id,
+          },
+        ],
+      },
+    });
+
+    return {
+      status_checkout: "SUCCESS",
+      status_payment: "SUCCESS",
+      balance_left: currentBalance?.balance || 0,
+    };
   }
 }
