@@ -15,4 +15,15 @@ export class OrderController {
       next(error);
     }
   }
+
+  static async getByUser(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const response = await OrderService.getByUser(req.user!);
+      res.status(200).send({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

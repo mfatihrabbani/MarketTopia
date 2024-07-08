@@ -83,6 +83,7 @@ model Product {
   store Store @relation(fields: [store_id], references: [store_id])
   stock StockProduct[]
   order Order[]
+  order_item OrderItem[]
 
   @@map("products")
 }
@@ -160,9 +161,11 @@ model Order {
 model OrderItem {
   order_item_id String @id
   order_id String
+  product_id String
   amount Int
   total_price Int
 
+  product Product @relation(fields: [product_id], references: [product_id])
   order Order @relation(fields: [order_id], references: [order_id])
 
   @@map("order_items")

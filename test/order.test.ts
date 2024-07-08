@@ -15,6 +15,8 @@ describe("POST /orders", () => {
   });
 
   afterAll(async () => {
+    await OrderUtil.deleteOrderItem();
+    await OrderUtil.delete();
     await StockUtil.delete();
     await OrderUtil.delete();
     await ProductUtil.delete();
@@ -70,5 +72,47 @@ describe("POST /orders", () => {
     console.log(response.body);
     expect(response.status).toBe(400);
     expect(response.body.errors).toBeDefined();
+  });
+});
+
+describe("GET /orders", () => {
+  beforeEach(async () => {
+    await UserUtil.create();
+    await StoreUtil.create();
+    await ProductUtil.create();
+    await StockUtil.create();
+    await OrderUtil.create();
+    await OrderUtil.createOrderItem();
+  });
+
+  afterEach(async () => {
+    await OrderUtil.deleteOrderItem();
+    await OrderUtil.delete();
+    await StockUtil.delete();
+    await OrderUtil.delete();
+    await ProductUtil.delete();
+    await StoreUtil.deleteAll();
+    await UserUtil.delete();
+  });
+
+  it("should get all orders by user", async () => {
+    const response = await supertest(web)
+      .get("/orders")
+      .set("Authorization", "token");
+
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data[0].order_id).toBeDefined();
+    expect(response.body.data[0].store_id).toBe("123");
+    expect(response.body.data[0].product_id).toBe("1234test");
+    expect(response.body.data[0].amount).toBeDefined();
+    expect(response.body.data[0].total_price).toBeDefined;
+    expect(response.body.data[0].status).toBe("UNPAID");
+    expect(response.body.data[0].product.image_url).toBe("test");
+    expect(response.body.data[0].product.product_id).toBe("1234test");
+    expect(response.body.data[0].product.product_name).toBe("test_product");
+    expect(response.body.data[0].product.product_description).toBeDefined();
+    expect(response.body.data[0].product.total_sold).toBeDefined();
+    expect(response.body.data[0].product.price).toBeDefined();
   });
 });
