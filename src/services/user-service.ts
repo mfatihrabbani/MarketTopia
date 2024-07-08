@@ -3,6 +3,10 @@ import querystring from "querystring";
 import axios from "axios";
 import prisma from "../apps/database";
 import { ResponseError } from "../errors/response-error";
+import { UpdateDepositGrowid } from "../models/users-model";
+import { Validation } from "./validation";
+import { UserValidation } from "../validations/user-validation";
+import { User } from "@prisma/client";
 
 dotenv.config();
 export class UserService {
@@ -83,5 +87,26 @@ export class UserService {
     return access_token;
   }
 
-  static async updateDepositGrowid(deposit): Promise<> {}
+  static async updateDepositGrowid(
+    user: User,
+    deposit: UpdateDepositGrowid
+  ): Promise<UpdateDepositGrowid> {
+    deposit = Validation.validate(UserValidation.UPDATEDEPOSITGROWID, deposit);
+
+    const newGrowid = await prisma.user.update({
+      data: {
+        growid: deposit.growid,
+      },
+      where: {
+        user_id: user.user_id,
+      },
+      select: {
+        growid: true,
+      },
+    });
+
+    return {
+      growid: newGrowid.growid ?? "NO_SET_GROWID",
+    };
+  }
 }

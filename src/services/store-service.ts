@@ -115,8 +115,7 @@ export class StoreService {
     return {
       world_deposit:
         newWorldDeposit.world_deposit?.toUpperCase() ?? "NO_HAVE_WORLD_DEPO",
-      bot_deposit:
-        newWorldDeposit.bot_deposit?.toUpperCase() ?? "NO_HAVE_BOT_DEPO",
+      bot_deposit: newWorldDeposit.bot_deposit ?? "NO_HAVE_BOT_DEPO",
       last_update_bot: newWorldDeposit?.last_update_bot ?? "UNKNOWN",
     };
   }
