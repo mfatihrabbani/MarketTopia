@@ -81,3 +81,45 @@ describe("PATCH /stores", () => {
     expect(response.body.data.name).toBe("ucup111");
   });
 });
+
+describe("PATCH /deposits", () => {
+  beforeEach(async () => {
+    await UserUtil.create();
+    await StoreUtil.create();
+  });
+
+  afterEach(async () => {
+    await StoreUtil.deleteAll();
+    await UserUtil.delete();
+  });
+
+  it("should update deposit store", async () => {
+    const response = await supertest(web)
+      .patch("/deposits")
+      .set("Authorization", "token")
+      .send({
+        world_deposit: "WORLDDEPO",
+        bot_deposit: "INIBOTDEPO",
+      });
+
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.world_deposit).toBe("WORLDDEPO");
+    expect(response.body.data.bot_deposit).toBe("INIBOTDEPO");
+    expect(response.body.data.last_update_bot).toBeDefined();
+  });
+
+  it("should failed update deposit store have space world or bot", async () => {
+    const response = await supertest(web)
+      .patch("/deposits")
+      .set("Authorization", "token")
+      .send({
+        world_deposit: "WORLD DEPO",
+        bot_deposit: "INI BOTDEPO",
+      });
+
+    console.log(response.body);
+    expect(response.status).toBe(400);
+    expect(response.body.errors).toBeDefined();
+  });
+});

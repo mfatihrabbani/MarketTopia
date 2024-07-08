@@ -18,6 +18,7 @@ export class StoreUtil {
         store_name: "test_store",
         private_key: "123",
         is_active: false,
+        last_update_bot: new Date().toISOString(),
       },
     });
   }
