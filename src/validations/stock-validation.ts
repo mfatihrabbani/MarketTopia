@@ -14,4 +14,6 @@ export class StockValidation {
       data: z.string().min(1),
     })
   );
+
+  static GETBYORDER: ZodType = z.string().min(1);
 }

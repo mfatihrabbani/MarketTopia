@@ -7,3 +7,8 @@ export type AddStock = {
 export interface AddStockResponse extends AddStock {
   stock_id: string;
 }
+
+export type GetStockUserResponse = {
+  stock_id: string;
+  data: string;
+};

@@ -1,9 +1,13 @@
-import { AddStock, AddStockResponse } from "../models/stock-model";
+import {
+  AddStock,
+  AddStockResponse,
+  GetStockUserResponse,
+} from "../models/stock-model";
 import { StockValidation } from "../validations/stock-validation";
 import { Validation } from "./validation";
 import prisma from "../apps/database";
 import { v4 as uuid } from "uuid";
-import { Store } from "@prisma/client";
+import { Store, User } from "@prisma/client";
 import { ResponseError } from "../errors/response-error";
 
 export class StockService {
@@ -94,5 +98,47 @@ export class StockService {
     });
 
     return newStock;
+  }
+
+  static async getStockUserByOrderId(
+    user: User,
+    order: string
+  ): Promise<GetStockUserResponse[]> {
+    const orderId = Validation.validate(StockValidation.GETBYORDER, order);
+
+    const isOrderedByThisUser = await prisma.order.findFirst({
+      where: {
+        user_id: user.user_id,
+      },
+    });
+
+    if (!isOrderedByThisUser) {
+      throw new ResponseError(404, "Order not found");
+    }
+
+    if (isOrderedByThisUser.status !== 1) {
+      throw new ResponseError(404, "Please checkout first this order");
+    }
+
+    const result = await prisma.userItem.findMany({
+      where: {
+        order_id: orderId,
+        AND: [
+          {
+            user_id: user.user_id,
+          },
+        ],
+      },
+      include: {
+        stock: true,
+      },
+    });
+
+    return result.map((data) => {
+      return {
+        stock_id: data.stock_id,
+        data: data.stock.data,
+      };
+    });
   }
 }
