@@ -5,7 +5,12 @@ export type AddUserBalanceInStoreRequest = {
 };
 
 export type UserBalanceInStoreResponse = {
-  username: string;
+  user_id: string;
   store_name: string;
   balance: number;
+};
+
+export type GetUserBalanceParamsRequest = {
+  store_id: string;
+  user_id: string;
 };

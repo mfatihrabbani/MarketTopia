@@ -16,5 +16,9 @@ sellerRouter.delete("/products", ProductController.delete);
 sellerRouter.patch("/deposits", StoreController.updateDeposit);
 
 sellerRouter.post("/balances", BalanceController.add);
+sellerRouter.get(
+  "/stores/:storeId/balances/users/:userId",
+  BalanceController.getById
+);
 
 export default sellerRouter;

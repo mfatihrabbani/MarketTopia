@@ -6,4 +6,9 @@ export class BalanceValidation {
     amount: z.number(),
     type: z.string().min(1),
   });
+
+  static GETBYID: ZodType = z.object({
+    store_id: z.string().min(1),
+    user_id: z.string().min(1),
+  });
 }

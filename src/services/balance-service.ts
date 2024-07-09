@@ -3,6 +3,7 @@ import prisma from "../apps/database";
 import { ResponseError } from "../errors/response-error";
 import {
   AddUserBalanceInStoreRequest,
+  GetUserBalanceParamsRequest,
   UserBalanceInStoreResponse,
 } from "../models/balance-model";
 import { BalanceValidation } from "../validations/balance-validation";
@@ -65,9 +66,42 @@ export class BalanceService {
     }
 
     return {
-      username: user.username,
+      user_id: user.user_id,
       store_name: store.store_name,
       balance: balance.balance,
     };
+  }
+
+  static async getById(
+    store: Store,
+    data: GetUserBalanceParamsRequest
+  ): Promise<string> {
+    data = Validation.validate(BalanceValidation.GETBYID, data);
+
+    if (store.store_id !== data.store_id) {
+      throw new ResponseError(400, "Cannot getting info balance another store");
+    }
+
+    const balance = await prisma.user.findFirst({
+      where: {
+        user_id: data.user_id,
+      },
+      include: {
+        balance_user: {
+          where: {
+            user_id: data.user_id,
+            AND: [
+              {
+                store_id: data.store_id,
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    return `Username: ${balance?.username} Balance ${
+      balance?.balance_user[0].balance || 0
+    }`;
   }
 }

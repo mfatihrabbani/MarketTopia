@@ -27,7 +27,7 @@ describe("POST /balances", () => {
 
     console.log(response.body);
     expect(response.status).toBe(200);
-    expect(response.body.data.username).toBe("test_id");
+    expect(response.body.data.user_id).toBe("test");
     expect(response.body.data.store_name).toBe("test_store");
     expect(response.body.data.balance).toBe(100);
   });
@@ -42,5 +42,27 @@ describe("POST /balances", () => {
     console.log(response.body);
     expect(response.status).toBe(404);
     expect(response.body.message).toBeDefined();
+  });
+});
+
+describe("POST /stores/:storeId/balances/users/:userId", () => {
+  beforeEach(async () => {
+    await UserUtil.create();
+    await StoreUtil.create();
+    await BalanceUtil.create();
+  });
+  afterEach(async () => {
+    await BalanceUtil.delete();
+    await StoreUtil.deleteAll();
+    await UserUtil.delete();
+  });
+
+  it("should get balance", async () => {
+    const response = await supertest(web)
+      .get("/stores/123/balances/users/test")
+      .set("PrivateKey-Store", "123");
+
+    console.log(response.text);
+    expect(response.status).toBe(200);
   });
 });

@@ -8,4 +8,15 @@ export class BalanceUtil {
       },
     });
   }
+
+  static async create() {
+    await prisma.balanceUser.create({
+      data: {
+        balance_user_id: "09090",
+        user_id: "test",
+        store_id: "123",
+        balance: 10000,
+      },
+    });
+  }
 }
