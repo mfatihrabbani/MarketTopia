@@ -65,7 +65,7 @@ export class BalanceService {
     }
 
     return {
-      username: user.growid || "UNKNOWN",
+      username: user.username,
       store_name: store.store_name,
       balance: balance.balance,
     };

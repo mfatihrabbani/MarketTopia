@@ -26,30 +26,46 @@ export class AuthMiddleware {
 
   static async store(req: StoreRequest, res: Response, next: NextFunction) {
     const token = req.get("Authorization");
+    const tokenStore = req.get("PrivateKey-Store");
 
-    const user = await prisma.user.findFirst({
-      where: {
-        token: token,
-      },
-    });
+    let store;
+    let user;
+    if (!token) {
+      if (!tokenStore) {
+        return res.status(404).json({
+          message: "Unauthorized",
+        });
+      }
+      store = await prisma.store.findFirst({
+        where: {
+          private_key: tokenStore,
+        },
+      });
 
-    if (!user) {
-      return res.status(404).json({
-        message: "Unauthorized",
+      if (!store) {
+        return res.status(404).json({
+          message: "Unauthorized",
+        });
+      }
+    } else {
+      user = await prisma.user.findFirst({
+        where: {
+          token: token,
+        },
       });
-    }
-    const existStore = await prisma.store.findFirst({
-      where: {
-        user_id: user?.user_id,
-      },
-    });
-    if (!existStore) {
-      return res.status(404).json({
-        message: "Please make a store first",
+      const existStore = await prisma.store.findFirst({
+        where: {
+          user_id: user?.user_id,
+        },
       });
+      if (!existStore) {
+        return res.status(404).json({
+          message: "Please make a store first",
+        });
+      }
     }
     req.user = user as User;
-    req.store = existStore as Store;
+    req.store = store as Store;
     next();
     return;
   }
