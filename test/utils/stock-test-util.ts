@@ -20,4 +20,8 @@ export class StockUtil {
       },
     });
   }
+
+  static async deleteAll() {
+    await prisma.stockProduct.deleteMany();
+  }
 }

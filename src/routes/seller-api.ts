@@ -3,6 +3,7 @@ import { AuthMiddleware } from "../middlewares/auth-middleware";
 import { ProductController } from "../controllers/product-controller";
 import { StoreController } from "../controllers/store-controller";
 import { BalanceController } from "../controllers/balance-controller";
+import { StockController } from "../controllers/stock-controller";
 
 const sellerRouter = express.Router();
 sellerRouter.use(AuthMiddleware.store);
@@ -20,5 +21,7 @@ sellerRouter.get(
   "/stores/:storeId/balances/users/:userId",
   BalanceController.getById
 );
+
+sellerRouter.post("/stocks", StockController.add);
 
 export default sellerRouter;

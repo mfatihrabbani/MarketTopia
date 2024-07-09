@@ -102,6 +102,6 @@ export class BalanceService {
 
     return `Username: ${balance?.username} Balance ${
       balance?.balance_user[0].balance || 0
-    }`;
+    } in Store : ${store.store_name}`;
   }
 }

@@ -262,6 +262,17 @@ export class OrderService {
           order_id: order.order_id,
         },
       });
+
+      await prisma.product.update({
+        data: {
+          total_sold: {
+            increment: amountProduct.amount,
+          },
+        },
+        where: {
+          product_id: product.product_id,
+        },
+      });
     });
 
     const currentBalance = await prisma.balanceUser.findFirst({

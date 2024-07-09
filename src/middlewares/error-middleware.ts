@@ -21,6 +21,8 @@ export const errorMiddleware = (
       res.status(404).json({ message: "Product not found" });
     } else if (error.meta.field_name.includes("status")) {
       res.status(404).json({ message: "Status order not found" });
+    } else if (error.meta.field_name.includes("type_id")) {
+      res.status(404).json({ message: "Types not found" });
     } else {
       res.status(500).json({
         errors: "Internal Error",
