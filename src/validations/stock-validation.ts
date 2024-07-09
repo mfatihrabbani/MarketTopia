@@ -6,4 +6,12 @@ export class StockValidation {
     type_id: z.number(),
     data: z.string().min(1),
   });
+
+  static ADDBULK: ZodType = z.array(
+    z.object({
+      product_id: z.string().min(1),
+      type_id: z.number(),
+      data: z.string().min(1),
+    })
+  );
 }

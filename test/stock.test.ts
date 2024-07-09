@@ -44,7 +44,7 @@ describe("POST /stocks", () => {
     console.log(response.body);
     expect(response.statusCode).toBe(404);
   });
-  it("should failed create stock", async () => {
+  it("should failed create stock type stock not found", async () => {
     const response = await supertest(web)
       .post("/stocks")
       .set("PrivateKey-Store", "123")
@@ -56,5 +56,117 @@ describe("POST /stocks", () => {
 
     console.log(response.body);
     expect(response.statusCode).toBe(404);
+  });
+});
+
+describe("POST /stocks/bulk", () => {
+  beforeEach(async () => {
+    await UserUtil.create();
+    await StoreUtil.create();
+    await ProductUtil.create();
+  });
+
+  afterEach(async () => {
+    await StockUtil.deleteAll();
+    await ProductUtil.delete();
+    await StoreUtil.deleteAll();
+    await UserUtil.delete();
+  });
+  it("should create bulk stock", async () => {
+    const response = await supertest(web)
+      .post("/stocks/bulk")
+      .set("PrivateKey-Store", "123")
+      .send({
+        data: [
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+        ],
+      });
+
+    console.log(response.body);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.data).toBeDefined();
+  });
+  it("should failed create bulk stock payload not enough", async () => {
+    const response = await supertest(web)
+      .post("/stocks/bulk")
+      .set("PrivateKey-Store", "123")
+      .send({
+        data: [
+          {
+            product_id: "1234test",
+            type_id: 1,
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+        ],
+      });
+
+    console.log(response.body);
+    expect(response.statusCode).toBe(400);
+  });
+  it("should create bulk stock", async () => {
+    const response = await supertest(web)
+      .post("/stocks/bulk")
+      .set("PrivateKey-Store", "123")
+      .send({
+        data: [
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1,
+            data: "CID:1",
+          },
+          {
+            product_id: "1234test",
+            type_id: 1111,
+            data: "CID:1",
+          },
+        ],
+      });
+
+    console.log(response.body);
+    expect(response.statusCode).toBe(404);
+    expect(response.body.message).toBeDefined();
   });
 });

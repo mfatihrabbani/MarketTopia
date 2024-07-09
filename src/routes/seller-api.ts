@@ -23,5 +23,6 @@ sellerRouter.get(
 );
 
 sellerRouter.post("/stocks", StockController.add);
+sellerRouter.post("/stocks/bulk", StockController.addBulk);
 
 export default sellerRouter;

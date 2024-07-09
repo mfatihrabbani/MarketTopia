@@ -45,4 +45,54 @@ export class StockService {
 
     return newStock;
   }
+
+  static async addBulk(
+    store: Store,
+    stocks: AddStock[]
+  ): Promise<AddStockResponse[]> {
+    stocks = Validation.validate(StockValidation.ADDBULK, stocks);
+
+    const newStock = await prisma.$transaction(async () => {
+      const newStocks = await Promise.all(
+        stocks.map(async (stock) => {
+          const product = await prisma.product.findFirst({
+            where: {
+              product_id: stock.product_id,
+              AND: [
+                {
+                  store_id: store.store_id,
+                },
+              ],
+            },
+          });
+
+          if (!product) {
+            throw new ResponseError(
+              404,
+              "Cannot add stock to another store product"
+            );
+          }
+
+          return await prisma.stockProduct.create({
+            data: {
+              stock_id: uuid(),
+              product_id: stock.product_id,
+              data: stock.data,
+              type_id: stock.type_id,
+              is_sold: false,
+            },
+            select: {
+              stock_id: true,
+              product_id: true,
+              data: true,
+              type_id: true,
+            },
+          });
+        })
+      );
+      return newStocks;
+    });
+
+    return newStock;
+  }
 }

@@ -13,4 +13,16 @@ export class StockController {
       next(error);
     }
   }
+
+  static async addBulk(req: StoreRequest, res: Response, next: NextFunction) {
+    try {
+      console.log(req.body.data);
+      const response = await StockService.addBulk(req.store!, req.body.data);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
