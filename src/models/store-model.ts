@@ -1,3 +1,6 @@
+import { Request } from "express";
+import { Store, User } from "@prisma/client";
+
 export type StoreCreateRequest = {
   store_name: string;
   name: string;
@@ -25,4 +28,9 @@ export type UpdateDepositRequest = {
 
 export interface UpdateDepositResponse extends UpdateDepositRequest {
   last_update_bot: string | undefined;
+}
+
+export interface StoreRequest extends Request {
+  user?: User;
+  store?: Store;
 }

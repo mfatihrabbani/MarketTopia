@@ -93,9 +93,19 @@ export class UserService {
   ): Promise<UpdateDepositGrowid> {
     deposit = Validation.validate(UserValidation.UPDATEDEPOSITGROWID, deposit);
 
+    const growid = await prisma.user.count({
+      where: {
+        growid: deposit.growid,
+      },
+    });
+
+    if (growid > 1) {
+      throw new ResponseError(400, "Growid has taken");
+    }
+
     const newGrowid = await prisma.user.update({
       data: {
-        growid: deposit.growid,
+        growid: deposit.growid.toLowerCase(),
       },
       where: {
         user_id: user.user_id,
