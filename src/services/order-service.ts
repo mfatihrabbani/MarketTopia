@@ -229,6 +229,10 @@ export class OrderService {
         take: amountProduct.amount,
       });
 
+      if (tempoStockUser.length < amountProduct.amount) {
+        throw new ResponseError(400, "Out of stock");
+      }
+
       const stockUser = await Promise.all(
         tempoStockUser.map(async (stock) => {
           const updateStock = await prisma.userItem.create({

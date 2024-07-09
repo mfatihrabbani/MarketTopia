@@ -35,7 +35,7 @@ Response Failed Body :
 ```
 
 ## Add Balances User API
-Endpoint : `GET /stores/:storeId/balance`
+Endpoint : `GET /stores/:storeId/balance/me`
 
 Headers : 
 - Authorization : Access Token
