@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/user-service";
-import { UserRequest } from "../models/users-model";
+import { UserRequest, UserSessionRequest } from "../models/users-model";
+import dotenv from "dotenv";
+dotenv.config();
 
 export class UserController {
   static loginDiscord(req: Request, res: Response, next: NextFunction) {
@@ -13,18 +15,15 @@ export class UserController {
   }
 
   static async callbackDiscordLogin(
-    req: Request,
+    req: UserSessionRequest,
     res: Response,
     next: NextFunction
   ) {
     try {
       const code = req.query.code as string;
       const token = await UserService.callbackDiscordLogin(code);
-      res.status(200).json({
-        data: {
-          token,
-        },
-      });
+      req.session.user = token;
+      res.redirect(process.env.BACK_URL!);
     } catch (error) {
       next(error);
     }
@@ -43,6 +42,23 @@ export class UserController {
       res.status(200).json({
         data: response,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getSession(
+    req: UserSessionRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      console.log("SESSION", req.session.user);
+      if (req.session.user) {
+        res.json(req.session.user);
+      } else {
+        res.status(401).json({ message: "User not logged in" });
+      }
     } catch (error) {
       next(error);
     }

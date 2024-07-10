@@ -7,6 +7,7 @@ import { UpdateDepositGrowid } from "../models/users-model";
 import { Validation } from "./validation";
 import { UserValidation } from "../validations/user-validation";
 import { User } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 export class UserService {
@@ -46,7 +47,7 @@ export class UserService {
 
     console.log(response);
 
-    const { access_token } = response.data;
+    const { access_token, refresh_token } = response.data;
 
     let user = await axios.get("https://discord.com/api/users/@me", {
       headers: {
@@ -57,6 +58,16 @@ export class UserService {
     if (!user.data) {
       throw new ResponseError(404, "Something wrong with discord Oauth");
     }
+
+    const newToken = jwt.sign(
+      {
+        id: user.data.id,
+      },
+      process.env.JWT_SECRET_KEY! || "INIRAHASIA"
+    );
+
+    console.log(newToken);
+    console.log(process.env.JWT_SECRET_KEY);
 
     const isUserExist = await prisma.user.findFirst({
       where: {
@@ -70,13 +81,13 @@ export class UserService {
           user_id: user.data.id,
           username: user.data.username,
           avatar: user.data.avatar,
-          token: access_token,
+          token: newToken,
         },
       });
     } else {
       await prisma.user.update({
         data: {
-          token: access_token,
+          token: newToken,
         },
         where: {
           user_id: user.data.id,
@@ -84,7 +95,7 @@ export class UserService {
       });
     }
 
-    return access_token;
+    return newToken;
   }
 
   static async updateDepositGrowid(
