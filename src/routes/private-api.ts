@@ -9,6 +9,7 @@ const privateRouter = express.Router();
 privateRouter.use(AuthMiddleware.user);
 
 privateRouter.post("/stores", StoreController.create);
+privateRouter.get("/stores/:storeId", StoreController.getById);
 
 privateRouter.post("/orders", OrderController.create);
 privateRouter.get("/orders", OrderController.getByUser);
@@ -17,6 +18,7 @@ privateRouter.patch("/users/deposits", UserController.updateDepositGrowid);
 
 privateRouter.post("/checkouts", OrderController.checkout);
 
+privateRouter.get("/orders/:orderId", OrderController.getOrderById);
 privateRouter.get("/orders/:orderId/items", StockController.getStockOrderUser);
 
 export default privateRouter;

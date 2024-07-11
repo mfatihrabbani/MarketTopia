@@ -21,6 +21,14 @@ export type StoreUpdateResponse = {
   name: string;
 };
 
+export type GetStoreByIdResponse = {
+  store_name: string;
+  name: string;
+  world_deposit: string | null;
+  bot_deposit: string | null;
+  last_update_bot: string | null;
+};
+
 export type UpdateDepositRequest = {
   world_deposit: string;
   bot_deposit: string;

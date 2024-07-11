@@ -44,7 +44,9 @@ export class OrderController {
     next: NextFunction
   ) {
     try {
-      const response = await OrderService.checkout(req.user!, req.body);
+      const response = await OrderService.getById(req.user!, {
+        order_id: req.params.orderId,
+      });
       res.status(200).send({
         data: response,
       });

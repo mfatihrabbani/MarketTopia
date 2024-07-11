@@ -9,4 +9,7 @@ export class OrderValidation {
   static CHECKOUT: ZodType = z.object({
     order_id: z.string().min(1),
   });
+  static GETBYID: ZodType = z.object({
+    order_id: z.string().min(1),
+  });
 }

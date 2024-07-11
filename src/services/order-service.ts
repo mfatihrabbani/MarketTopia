@@ -7,6 +7,7 @@ import {
   CreateOrderResponse,
   CheckoutRequest,
   CheckoutResponse,
+  GetOrderByIdRequest,
 } from "../models/order-model";
 import { OrderValidation } from "../validations/order-validation";
 import { Validation } from "./validation";
@@ -292,6 +293,71 @@ export class OrderService {
       status_checkout: "SUCCESS",
       status_payment: "SUCCESS",
       balance_left: currentBalance?.balance || 0,
+    };
+  }
+
+  static async getById(
+    user: User,
+    order: GetOrderByIdRequest
+  ): Promise<GetOrderResponse> {
+    order = Validation.validate(OrderValidation.GETBYID, order);
+
+    const dataOrder = await prisma.order.findFirst({
+      where: { order_id: order.order_id },
+      include: {
+        product: {
+          select: {
+            image_url: true,
+            product_id: true,
+            product_name: true,
+            product_description: true,
+            total_sold: true,
+            price: true,
+          },
+        },
+        store: {
+          select: {
+            store_name: true,
+          },
+        },
+        status_type: {
+          select: {
+            type_status_name: true,
+          },
+        },
+      },
+    });
+
+    if (!dataOrder) {
+      throw new ResponseError(404, "Order not found");
+    }
+
+    if (dataOrder.user_id !== user.user_id) {
+      throw new ResponseError(404, "You cannot see another user order");
+    }
+
+    const amountProduct = await prisma.orderItem.findFirst({
+      where: {
+        order_id: order.order_id,
+      },
+    });
+
+    return {
+      order_id: dataOrder.order_id,
+      store_id: dataOrder.store_id,
+      store_name: dataOrder.store.store_name,
+      product_id: dataOrder.product_id,
+      amount: amountProduct?.amount || 0,
+      total_price: dataOrder.price,
+      status: dataOrder.status_type.type_status_name,
+      product: {
+        product_id: dataOrder.product.product_id,
+        product_name: dataOrder.product.product_name,
+        product_description: dataOrder.product.product_description,
+        total_sold: dataOrder.product.total_sold,
+        image_url: dataOrder.product.image_url,
+        price: dataOrder.product.price,
+      },
     };
   }
 }

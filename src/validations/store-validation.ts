@@ -19,4 +19,5 @@ export class StoreValidation {
       .min(1)
       .refine((s) => !s.includes(" "), "Dont use space"),
   });
+  static GETBYID: ZodType = z.string().min(1);
 }

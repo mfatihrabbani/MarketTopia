@@ -35,3 +35,7 @@ export type CheckoutResponse = {
   status_payment: string;
   balance_left: number;
 };
+
+export type GetOrderByIdRequest = {
+  order_id: string;
+};

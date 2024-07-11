@@ -31,6 +31,17 @@ export class StoreController {
     }
   }
 
+  static async getById(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const response = await StoreService.getById(req.params.storeId);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async updateDeposit(
     req: UserRequest,
     res: Response,

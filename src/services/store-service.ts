@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import prisma from "../apps/database";
 import {
+  GetStoreByIdResponse,
   StoreCreateRequest,
   StoreCreateResponse,
   StoreUpdateRequest,
@@ -82,6 +83,29 @@ export class StoreService {
       store_name: store.store_name,
       name: store.name,
     };
+  }
+
+  static async getById(storeId: string): Promise<GetStoreByIdResponse> {
+    storeId = Validation.validate(StoreValidation.GETBYID, storeId);
+
+    const store = await prisma.store.findFirst({
+      where: {
+        store_id: storeId,
+      },
+      select: {
+        store_name: true,
+        name: true,
+        world_deposit: true,
+        bot_deposit: true,
+        last_update_bot: true,
+      },
+    });
+
+    if (!store) {
+      throw new ResponseError(404, "Store not found");
+    }
+
+    return store;
   }
 
   static async getStoreIdByUserId(userId: string): Promise<string> {
