@@ -256,6 +256,7 @@ export class ProductService {
     });
 
     return {
+      store_id: existProduct.store_id,
       image_url: existProduct.image_url,
       product_id: existProduct.product_id,
       product_name: existProduct.product_name,

@@ -17,6 +17,7 @@ export const errorMiddleware = (
       errors: error.message,
     });
   } else if (error.code == "P2003") {
+    console.log(error);
     if (error.meta.field_name.includes("products")) {
       res.status(404).json({ message: "Product not found" });
     } else if (error.meta.field_name.includes("status")) {
@@ -29,6 +30,7 @@ export const errorMiddleware = (
       });
     }
   } else {
+    console.log("INI ERROR");
     console.log(error);
     res.status(500).json({
       errors: "Internal Error",

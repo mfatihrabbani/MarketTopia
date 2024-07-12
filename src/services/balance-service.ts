@@ -1,8 +1,10 @@
-import { Store } from "@prisma/client";
+import { Store, User } from "@prisma/client";
 import prisma from "../apps/database";
 import { ResponseError } from "../errors/response-error";
 import {
   AddUserBalanceInStoreRequest,
+  GetInforUserAndBalanceParamsRequest,
+  GetInfoUserAndBalanceResponse,
   GetUserBalanceParamsRequest,
   UserBalanceInStoreResponse,
 } from "../models/balance-model";
@@ -103,5 +105,41 @@ export class BalanceService {
     return `Username: ${balance?.username} Balance ${
       balance?.balance_user[0].balance || 0
     } in Store : ${store.store_name}`;
+  }
+
+  static async getInfoUserAndBalance(
+    user: User,
+    storeId: GetInforUserAndBalanceParamsRequest
+  ): Promise<GetInfoUserAndBalanceResponse> {
+    storeId = Validation.validate(BalanceValidation.GETBYUSER, storeId);
+
+    const info = await prisma.user.findFirst({
+      where: {
+        user_id: user.user_id,
+      },
+      include: {
+        balance_user: {
+          where: {
+            user_id: user.user_id,
+            AND: [
+              {
+                store_id: storeId.store_id,
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    if (!info) {
+      throw new ResponseError(404, "You haven't deposited yet");
+    }
+
+    return {
+      username: info.username,
+      balance: info.balance_user[0] ? info.balance_user[0].balance : 0,
+      user_id: info.user_id,
+      growid: info.growid || "You Have not set yet",
+    };
   }
 }

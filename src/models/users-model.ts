@@ -17,3 +17,8 @@ export interface UserRequest extends Request {
 export type UpdateDepositGrowid = {
   growid: string;
 };
+
+export type GetUserInfoResponse = {
+  growid: string;
+  username: string;
+};
