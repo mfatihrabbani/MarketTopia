@@ -291,6 +291,9 @@ export class ProductService {
           },
         ],
       },
+      include: {
+        store: true,
+      },
     });
 
     const productWithStock = await Promise.all(
@@ -311,6 +314,8 @@ export class ProductService {
           product_id: product.product_id,
           product_name: product.product_name,
           product_description: product.product_description,
+          store_name: product.store.store_name,
+          store_id: product.store.store_id,
           total_sold: product.total_sold,
           price: product.price,
           total_stock: totalStock || 0,
