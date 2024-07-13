@@ -116,7 +116,7 @@ export class StockService {
       throw new ResponseError(404, "Order not found");
     }
 
-    if (isOrderedByThisUser.status !== 1) {
+    if (isOrderedByThisUser.status === 1) {
       throw new ResponseError(404, "Please checkout first this order");
     }
 

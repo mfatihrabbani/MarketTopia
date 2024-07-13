@@ -16,6 +16,7 @@ export type CreateOrderResponse = {
 };
 
 export type GetOrderResponse = {
+  username?: string;
   order_id: string;
   store_id: string;
   store_name: string;

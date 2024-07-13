@@ -326,6 +326,11 @@ export class OrderService {
             type_status_name: true,
           },
         },
+        user: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
 
@@ -344,6 +349,7 @@ export class OrderService {
     });
 
     return {
+      username: dataOrder.user.username,
       order_id: dataOrder.order_id,
       store_id: dataOrder.store_id,
       store_name: dataOrder.store.store_name,

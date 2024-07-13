@@ -50,6 +50,7 @@ export type ProductGetResponse = {
   total_sold: number;
   price: number;
   store_id?: string;
+  store_name?: string;
 };
 
 export type ProductDeleteRequest = {
