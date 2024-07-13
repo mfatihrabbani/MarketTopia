@@ -200,11 +200,12 @@ export class OrderService {
       },
     });
 
-    if (userBalance?.balance || 0 < amountProduct.amount * product.price) {
+    if ((userBalance?.balance || 0) < amountProduct.amount * product.price) {
+      console.log(amountProduct.amount * product.price);
       throw new ResponseError(400, "Your balance not enough");
     }
 
-    prisma.$transaction(async () => {
+    await prisma.$transaction(async () => {
       const user = await prisma.balanceUser.update({
         data: {
           balance: {
