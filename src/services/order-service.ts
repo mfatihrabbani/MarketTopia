@@ -206,17 +206,6 @@ export class OrderService {
     }
 
     await prisma.$transaction(async () => {
-      const user = await prisma.balanceUser.update({
-        data: {
-          balance: {
-            decrement: amountProduct.amount * product.price,
-          },
-        },
-        where: {
-          balance_user_id: userBalance?.balance_user_id,
-        },
-      });
-
       const tempoStockUser = await prisma.stockProduct.findMany({
         where: {
           AND: [
@@ -234,6 +223,16 @@ export class OrderService {
       if (tempoStockUser.length < amountProduct.amount) {
         throw new ResponseError(400, "Out of stock");
       }
+      const user = await prisma.balanceUser.update({
+        data: {
+          balance: {
+            decrement: amountProduct.amount * product.price,
+          },
+        },
+        where: {
+          balance_user_id: userBalance?.balance_user_id,
+        },
+      });
 
       const stockUser = await Promise.all(
         tempoStockUser.map(async (stock) => {
