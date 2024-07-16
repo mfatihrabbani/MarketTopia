@@ -109,6 +109,9 @@ export class StockService {
     const isOrderedByThisUser = await prisma.order.findFirst({
       where: {
         user_id: user.user_id,
+        AND: {
+          order_id: orderId,
+        },
       },
     });
 
