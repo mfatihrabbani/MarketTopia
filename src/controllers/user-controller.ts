@@ -22,7 +22,9 @@ export class UserController {
     try {
       const code = req.query.code as string;
       const token = await UserService.callbackDiscordLogin(code);
+      const storeId = await UserService.getStoreByToken(token);
       req.session.user = token;
+      req.session.store = storeId;
       res.redirect(process.env.BACK_URL!);
     } catch (error) {
       next(error);
@@ -55,7 +57,7 @@ export class UserController {
     try {
       console.log("SESSION", req.session.user);
       if (req.session.user) {
-        res.json(req.session.user);
+        res.json({ user: req.session.user, storeId: req.session.store });
       } else {
         res.status(401).json({ message: "User not logged in" });
       }

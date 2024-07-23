@@ -130,4 +130,20 @@ export class UserService {
       growid: newGrowid.growid ?? "NO_SET_GROWID",
     };
   }
+
+  static async getStoreByToken(token: string): Promise<string> {
+    const user = await prisma.user.findFirst({
+      where: {
+        token: token,
+      },
+      include: {
+        store: {
+          select: {
+            store_id: true,
+          },
+        },
+      },
+    });
+    return user?.store?.store_id || "null";
+  }
 }

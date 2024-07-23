@@ -81,7 +81,7 @@ export class ProductService {
         total_sold: 0,
         is_active: true,
         is_delete: false,
-        image_url: `${process.env.PATH_PUBLIC_FILE}/default.png`,
+        image_url: null,
       },
     });
 

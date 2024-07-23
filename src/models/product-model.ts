@@ -27,7 +27,7 @@ export type ProductUpdateRequest = {
 };
 
 export interface ProductUpdateResponse extends ProductCreateResponse {
-  image_url: string;
+  image_url: string | null;
 }
 
 export type ObjectValidateProductReq = {
@@ -42,7 +42,7 @@ export type QueryParamsGetAll = {
 };
 
 export type ProductGetResponse = {
-  image_url: string;
+  image_url: string | null;
   product_id: string;
   product_name: string;
   product_description: string;

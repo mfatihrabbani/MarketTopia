@@ -74,7 +74,7 @@ model Product {
   category_id String @db.VarChar(100) 
   payment_method String @db.VarChar(100) 
   total_sold Int @db.Int() @default(0)
-  image_url String @db.VarChar(100) 
+  image_url String? @db.VarChar(100) 
   price Int
   is_active Boolean
   is_delete Boolean
