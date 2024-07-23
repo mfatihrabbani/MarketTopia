@@ -51,6 +51,8 @@ export type ProductGetResponse = {
   price: number;
   store_id?: string;
   store_name?: string;
+  category_id?: string;
+  payment_method?: string;
 };
 
 export type ProductDeleteRequest = {

@@ -313,6 +313,8 @@ export class ProductService {
           image_url: product.image_url,
           product_id: product.product_id,
           product_name: product.product_name,
+          category_id: product.category_id,
+          payment_method: product.payment_method,
           product_description: product.product_description,
           store_name: product.store.store_name,
           store_id: product.store.store_id,
