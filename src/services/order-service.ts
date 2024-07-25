@@ -274,6 +274,13 @@ export class OrderService {
           product_id: product.product_id,
         },
       });
+
+      await prisma.transaction.create({
+        data: {
+          transaction_id: uuid(),
+          order_id: order.order_id,
+        },
+      });
     });
 
     const currentBalance = await prisma.balanceUser.findFirst({
