@@ -9,6 +9,7 @@ const sellerRouter = express.Router();
 sellerRouter.use(AuthMiddleware.store);
 
 sellerRouter.patch("/stores", StoreController.update);
+sellerRouter.get("/stores/me/private-key", StoreController.getPrivateKey);
 
 sellerRouter.post("/products", ProductController.create);
 sellerRouter.patch("/products", ProductController.update);

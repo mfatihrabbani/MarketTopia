@@ -260,6 +260,8 @@ export class ProductService {
       image_url: existProduct.image_url,
       product_id: existProduct.product_id,
       product_name: existProduct.product_name,
+      category_id: existProduct.category_id,
+      payment_method: existProduct.payment_method,
       product_description: existProduct.product_description,
       total_sold: existProduct.total_sold,
       price: existProduct.price,

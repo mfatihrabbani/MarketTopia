@@ -58,6 +58,7 @@ export class AuthMiddleware {
           user_id: user?.user_id,
         },
       });
+      store = existStore;
       if (!existStore) {
         return res.status(404).json({
           message: "Please make a store first",
@@ -66,6 +67,7 @@ export class AuthMiddleware {
     }
     req.user = user as User;
     req.store = store as Store;
+    console.log("STORE", store);
     next();
     return;
   }
