@@ -18,6 +18,7 @@ export class TransactionService {
           },
         ],
       },
+      orderBy: [{ order_date: "desc" }],
       include: {
         product: {
           select: {
