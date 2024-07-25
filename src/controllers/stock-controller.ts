@@ -44,4 +44,21 @@ export class StockController {
       next(error);
     }
   }
+
+  static async getStockByProduct(
+    req: StoreRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const response = await StockService.getStockByProduct(
+        req.params.productId
+      );
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

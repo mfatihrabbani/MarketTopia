@@ -144,4 +144,27 @@ export class StockService {
       };
     });
   }
+
+  static async getStockByProduct(
+    productId: string
+  ): Promise<GetStockUserResponse[]> {
+    productId = Validation.validate(StockValidation.GETBYPRODUCT, productId);
+
+    const stocks = await prisma.stockProduct.findMany({
+      where: {
+        product_id: productId,
+        AND: [
+          {
+            is_sold: false,
+          },
+        ],
+      },
+      select: {
+        data: true,
+        stock_id: true,
+      },
+    });
+
+    return stocks;
+  }
 }

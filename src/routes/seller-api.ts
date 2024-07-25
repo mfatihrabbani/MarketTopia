@@ -26,6 +26,7 @@ sellerRouter.get(
 
 sellerRouter.post("/stocks", StockController.add);
 sellerRouter.post("/stocks/bulk", StockController.addBulk);
+sellerRouter.get("/stocks/:productId", StockController.getStockByProduct);
 
 sellerRouter.get(
   "/transaction/me",
