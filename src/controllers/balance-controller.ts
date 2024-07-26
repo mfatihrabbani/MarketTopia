@@ -7,7 +7,22 @@ import { UserRequest } from "../models/users-model";
 export class BalanceController {
   static async add(req: StoreRequest, res: Response, next: NextFunction) {
     try {
-      const response = await BalanceService.add(req.store!, req.body);
+      console.log("API HIT");
+      let data;
+      if (!req.body.growid) {
+        data = {
+          growid: req.query.growid,
+          amount: req.query.amount && Number(req.query.amount),
+          type: req.query.type,
+        };
+        console.log("Empty body");
+      } else {
+        data = req.body;
+      }
+
+      console.log(req.body);
+      const response = await BalanceService.add(req.store!, data);
+      console.log(response);
       res.status(200).json({
         data: response,
       });
