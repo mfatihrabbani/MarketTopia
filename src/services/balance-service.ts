@@ -19,7 +19,7 @@ export class BalanceService {
   ): Promise<UserBalanceInStoreResponse> {
     data = Validation.validate(BalanceValidation.ADD, data);
 
-    if (data.type.includes("Diamond Lock")) {
+    if (data.type.includes("Diamond")) {
       data.amount = data.amount * 100;
     }
 
@@ -71,6 +71,7 @@ export class BalanceService {
       user_id: user.user_id,
       store_name: store.store_name,
       balance: balance.balance,
+      username: user.username,
     };
   }
 

@@ -30,6 +30,11 @@ export class TransactionService {
             amount: true,
           },
         },
+        user: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
 
@@ -39,6 +44,7 @@ export class TransactionService {
         amount: order.order_item[0].amount,
         time: order.order_date,
         total_price: order.price,
+        username: order.user.username,
       };
     });
   }

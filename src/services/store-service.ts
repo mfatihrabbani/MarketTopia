@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Store, User } from "@prisma/client";
 import prisma from "../apps/database";
 import {
   GetStoreByIdResponse,
@@ -142,5 +142,18 @@ export class StoreService {
       bot_deposit: newWorldDeposit.bot_deposit ?? "NO_HAVE_BOT_DEPO",
       last_update_bot: newWorldDeposit?.last_update_bot ?? "UNKNOWN",
     };
+  }
+
+  static async updateTimeBot(store: Store): Promise<string> {
+    const time = await prisma.store.update({
+      data: {
+        last_update_bot: new Date().toISOString(),
+      },
+      where: {
+        store_id: store.store_id,
+      },
+    });
+
+    return "Success Update Bot Time";
   }
 }
