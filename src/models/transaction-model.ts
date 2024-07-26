@@ -7,4 +7,5 @@ export type GetTransactionByStoreResponse = {
   total_price: number;
   time: Date;
   product_name: string;
+  username: string;
 };
