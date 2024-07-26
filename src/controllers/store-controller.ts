@@ -73,4 +73,18 @@ export class StoreController {
       next(error);
     }
   }
+
+  static async updateTime(
+    req: StoreRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const response = await StoreService.updateTimeBot(req.store!);
+
+      res.status(200).send(response);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
