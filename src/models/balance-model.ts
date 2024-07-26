@@ -8,6 +8,7 @@ export type UserBalanceInStoreResponse = {
   user_id: string;
   store_name?: string;
   balance: number;
+  username: string;
 };
 
 export type GetUserBalanceParamsRequest = {
