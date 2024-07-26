@@ -11,6 +11,7 @@ sellerRouter.use(AuthMiddleware.store);
 
 sellerRouter.patch("/stores", StoreController.update);
 sellerRouter.get("/stores/me/private-key", StoreController.getPrivateKey);
+sellerRouter.put("/stores/bot-time", StoreController.updateTime);
 
 sellerRouter.post("/products", ProductController.create);
 sellerRouter.patch("/products", ProductController.update);
