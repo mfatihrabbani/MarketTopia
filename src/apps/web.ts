@@ -5,8 +5,12 @@ import privateRouter from "../routes/private-api";
 import sellerRouter from "../routes/seller-api";
 import cors from "cors";
 import session from "express-session";
+import path from "path";
+import uploadApi from "../routes/upload-api";
 
 export const web = express();
+web.use("/static", express.static("./static"));
+
 web.use(
   cors({
     origin: "http://localhost:3000",
@@ -23,6 +27,7 @@ web.use(
 );
 web.use(express.json());
 web.use(publicRouter);
+web.use(uploadApi);
 web.use(privateRouter);
 web.use(sellerRouter);
 

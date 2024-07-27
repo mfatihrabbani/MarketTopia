@@ -4,6 +4,7 @@ export type ProductCreateRequest = {
   category_id: string;
   payment_method: string;
   price: number;
+  image_url: string | null;
 };
 
 export type ProductCreateResponse = {

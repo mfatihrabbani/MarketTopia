@@ -16,6 +16,7 @@ import prisma from "../apps/database";
 import { StoreService } from "./store-service";
 import { ResponseError } from "../errors/response-error";
 import { v4 as uuid } from "uuid";
+import { StoreRequest } from "../models/store-model";
 
 export class ProductService {
   static async basicValidate(
@@ -81,7 +82,7 @@ export class ProductService {
         total_sold: 0,
         is_active: true,
         is_delete: false,
-        image_url: null,
+        image_url: product.image_url,
       },
     });
 
@@ -328,5 +329,15 @@ export class ProductService {
     );
 
     return productWithStock;
+  }
+
+  static async uploadImage(request: StoreRequest): Promise<string> {
+    if (!request.file) {
+      throw new ResponseError(404, "No image uploaded");
+    }
+
+    const filePath = `/static/${request.file.filename}`;
+
+    return filePath;
   }
 }

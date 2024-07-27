@@ -7,6 +7,7 @@ import {
   QueryParamsGetAll,
 } from "../models/product-model";
 import { ProductService } from "../services/product-service";
+import { StoreRequest } from "../models/store-model";
 
 export class ProductController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
@@ -80,6 +81,24 @@ export class ProductController {
       const response = await ProductService.getByStore(params);
       res.status(200).json({
         data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async uploadImage(
+    req: StoreRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const response = await ProductService.uploadImage(req);
+
+      res.status(200).json({
+        data: {
+          file_name: response,
+        },
       });
     } catch (error) {
       next(error);

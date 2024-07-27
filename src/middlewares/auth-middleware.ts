@@ -8,15 +8,18 @@ export class AuthMiddleware {
   static async user(req: UserRequest, res: Response, next: NextFunction) {
     const token = req.get("Authorization");
 
-    const user = await prisma.user.findFirst({
-      where: {
-        token: token,
-      },
-    });
-    if (user) {
-      req.user = user as User;
-      next();
-      return;
+    if (token) {
+      const user = await prisma.user.findFirst({
+        where: {
+          token: token,
+        },
+      });
+      console.log(user);
+      if (user) {
+        req.user = user as User;
+        next();
+        return;
+      }
     }
 
     res.status(404).json({
@@ -27,6 +30,8 @@ export class AuthMiddleware {
   static async store(req: StoreRequest, res: Response, next: NextFunction) {
     const token = req.get("Authorization");
     const tokenStore = req.get("PrivateKey-Store");
+
+    console.log(req.file);
 
     let store;
     let user;
