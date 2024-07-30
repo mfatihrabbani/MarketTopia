@@ -9,9 +9,9 @@ import { TransactionController } from "../controllers/transaction-controller";
 const sellerRouter = express.Router();
 sellerRouter.use(AuthMiddleware.store);
 
+sellerRouter.put("/stores/bot-time", StoreController.updateTime);
 sellerRouter.patch("/stores", StoreController.update);
 sellerRouter.get("/stores/me/private-key", StoreController.getPrivateKey);
-sellerRouter.put("/stores/bot-time", StoreController.updateTime);
 
 sellerRouter.post("/products", ProductController.create);
 sellerRouter.patch("/products", ProductController.update);

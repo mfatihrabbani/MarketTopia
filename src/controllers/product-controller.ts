@@ -5,6 +5,7 @@ import {
   ProductDeleteRequest,
   ProductUpdateRequest,
   QueryParamsGetAll,
+  QuerySearchParams,
 } from "../models/product-model";
 import { ProductService } from "../services/product-service";
 import { StoreRequest } from "../models/store-model";
@@ -99,6 +100,24 @@ export class ProductController {
         data: {
           file_name: response,
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async seacrhProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = {
+        product_search: req.query.product_search,
+        page: req.query.page,
+        size: req.query.size,
+        news: req.query.news,
+        most_sold: req.query.most_sold,
+      } as QuerySearchParams;
+      const response = await ProductService.searchProduct(query);
+      res.status(200).json({
+        data: response,
       });
     } catch (error) {
       next(error);

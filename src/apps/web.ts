@@ -27,8 +27,8 @@ web.use(
 );
 web.use(express.json());
 web.use(publicRouter);
-web.use(uploadApi);
 web.use(privateRouter);
+web.use(uploadApi);
 web.use(sellerRouter);
 
 web.use(errorMiddleware);

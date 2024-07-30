@@ -1,5 +1,6 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import {
+  ConditionSearchProduct,
   GetProductParams,
   ObjectValidateProductReq,
   ProductCreateRequest,
@@ -9,6 +10,8 @@ import {
   ProductUpdateRequest,
   ProductUpdateResponse,
   QueryParamsGetAll,
+  QuerySearchParams,
+  QuerySearchResponse,
 } from "../models/product-model";
 import { Validation } from "./validation";
 import { ProductValidation } from "../validations/product-validation";
@@ -17,6 +20,7 @@ import { StoreService } from "./store-service";
 import { ResponseError } from "../errors/response-error";
 import { v4 as uuid } from "uuid";
 import { StoreRequest } from "../models/store-model";
+import { date } from "zod";
 
 export class ProductService {
   static async basicValidate(
@@ -158,6 +162,9 @@ export class ProductService {
     }
 
     const products = await prisma.product.findMany({
+      where: {
+        is_active: true,
+      },
       orderBy: filters.orderBy,
       take: query.size,
       include: {
@@ -339,5 +346,92 @@ export class ProductService {
     const filePath = `/static/${request.file.filename}`;
 
     return filePath;
+  }
+
+  static async searchProduct(
+    params: QuerySearchParams
+  ): Promise<QuerySearchResponse> {
+    const newParams = ProductValidation.QUERYPRODUCT.parse(params);
+
+    const { product_search, page, size, news, most_sold } = newParams;
+
+    const skip = (page - 1) * size;
+    const take = size;
+
+    const conditions: ConditionSearchProduct = {
+      AND: [
+        {
+          is_active: true,
+        },
+      ],
+    };
+
+    const conditionsOrder: Prisma.ProductOrderByWithRelationInput[] = [];
+
+    if (most_sold) {
+      conditionsOrder.push({
+        total_sold: "desc" as Prisma.SortOrder,
+      });
+    }
+
+    if (product_search) {
+      conditions.product_name = {
+        contains: product_search,
+      };
+    }
+
+    const [products, totalProducts] = await prisma.$transaction([
+      prisma.product.findMany({
+        where: conditions,
+        take: take,
+        skip: skip,
+        orderBy: conditionsOrder,
+        include: {
+          store: {
+            select: {
+              store_name: true,
+            },
+          },
+        },
+      }),
+      prisma.product.count({
+        where: conditions,
+      }),
+    ]);
+
+    let productAndStock = await Promise.all(
+      products.map(async (product) => {
+        const totalStock = await prisma.stockProduct.count({
+          where: {
+            product_id: product.product_id,
+            AND: [
+              {
+                is_sold: false,
+              },
+            ],
+          },
+        });
+        return {
+          image_url: product.image_url,
+          product_id: product.product_id,
+          product_name: product.product_name,
+          product_description: product.product_description,
+          total_sold: product.total_sold,
+          price: product.price,
+          total_stock: totalStock || 0,
+          store_name: product.store.store_name,
+        };
+      })
+    );
+
+    return {
+      products: productAndStock,
+      page: {
+        page: page,
+        size: size,
+        total_page: totalProducts < size ? 1 : totalProducts / size,
+        total_item: totalProducts,
+      },
+    };
   }
 }

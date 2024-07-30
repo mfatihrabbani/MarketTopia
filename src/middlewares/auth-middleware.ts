@@ -8,6 +8,8 @@ export class AuthMiddleware {
   static async user(req: UserRequest, res: Response, next: NextFunction) {
     const token = req.get("Authorization");
 
+    console.log(token);
+
     if (token) {
       const user = await prisma.user.findFirst({
         where: {
@@ -31,7 +33,7 @@ export class AuthMiddleware {
     const token = req.get("Authorization");
     const tokenStore = req.get("PrivateKey-Store");
 
-    console.log(req.file);
+    console.log(tokenStore);
 
     let store;
     let user;
@@ -41,6 +43,7 @@ export class AuthMiddleware {
           message: "Unauthorized",
         });
       }
+      console.log("Find store by token store");
       store = await prisma.store.findFirst({
         where: {
           private_key: tokenStore,
@@ -48,6 +51,7 @@ export class AuthMiddleware {
       });
 
       if (!store) {
+        console.log("Store gaada");
         return res.status(404).json({
           message: "Unauthorized",
         });
@@ -73,6 +77,7 @@ export class AuthMiddleware {
     req.user = user as User;
     req.store = store as Store;
     console.log("STORE", store);
+    console.log("Store ada");
     next();
     return;
   }

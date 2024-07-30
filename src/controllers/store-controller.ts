@@ -80,6 +80,7 @@ export class StoreController {
     next: NextFunction
   ) {
     try {
+      console.log("updating time,,");
       const response = await StoreService.updateTimeBot(req.store!);
 
       res.status(200).send(response);

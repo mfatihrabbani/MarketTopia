@@ -1,3 +1,5 @@
+import { boolean } from "zod";
+
 export type ProductCreateRequest = {
   product_name: string;
   product_description: string;
@@ -64,3 +66,30 @@ export type ProductDeleteResponse = {
 };
 
 export type GetProductParams = string;
+
+export type QuerySearchParams = {
+  product_search?: string;
+  page: string | number;
+  size: string | number;
+  news?: string | boolean;
+  most_sold?: string | boolean;
+};
+
+export type QuerySearchResponse = {
+  products: ProductGetResponse[];
+  page: {
+    page: number;
+    size: number;
+    total_page: number;
+    total_item: number;
+  };
+};
+
+export type ConditionSearchProduct = {
+  product_name?: {
+    contains: string;
+  };
+  AND: Array<{
+    is_active: boolean;
+  }>;
+};

@@ -26,4 +26,27 @@ export class ProductValidation {
   static GETBYID: ZodType = z.string().min(1);
 
   static GETBYSTORE: ZodType = z.string().min(1);
+
+  static QUERYPRODUCT: ZodType = z.object({
+    product_search: z.string().optional(),
+    page: z
+      .string()
+      .min(1)
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val), {
+        message: "Page must be a number",
+      }),
+    size: z
+      .string()
+      .min(1)
+      .transform((val) => Number(val)),
+    most_sold: z
+      .string()
+      .optional()
+      .transform((val) => Boolean(Number(val))),
+    news: z
+      .string()
+      .optional()
+      .transform((val) => Boolean(Number(val))),
+  });
 }

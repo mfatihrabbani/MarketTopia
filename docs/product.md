@@ -198,3 +198,37 @@ Response Success Body :
 
 }
 ```
+
+## Search Product API
+Endpoint : `GET /products/search`
+
+Headers : -
+
+Query : 
+- product_search (string) : search by name
+- page (number) : current page
+
+- size : Size data
+- news : If true sorted by update time
+- most_sold : if true sorted by most sold
+
+Response Success Body :
+```json
+{
+    "data" : {
+        "product_name" : "CID 9 WL",
+        "product_description" :  "Ini adalah cid untuk ngebot sangat kuat anti ban",
+        "category <CATEGORY>" : "ACCOUNT",
+        "payment_method <PAYMENT_METHOD>" : "WORLD_LOCK",
+        "price" : 10,
+        "total_sold" : 100,
+        "total_stock" : 100000,
+    },
+    "page" : {
+        "page" : 1,
+        "total_page" : 10,
+        "size_page" : 10, 
+    }
+
+}
+```
