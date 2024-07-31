@@ -87,6 +87,7 @@ export class ProductService {
         is_active: true,
         is_delete: false,
         image_url: product.image_url,
+        display_image_url: product.display_image_url,
       },
     });
 
@@ -246,6 +247,13 @@ export class ProductService {
       where: {
         product_id: productId,
       },
+      include: {
+        store: {
+          select: {
+            store_name: true,
+          },
+        },
+      },
     });
 
     if (!existProduct) {
@@ -274,6 +282,8 @@ export class ProductService {
       total_sold: existProduct.total_sold,
       price: existProduct.price,
       total_stock: totalStock || 0,
+      display_image_url: existProduct.display_image_url,
+      store_name: existProduct.store.store_name,
     };
   }
 

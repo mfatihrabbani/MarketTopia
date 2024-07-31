@@ -7,6 +7,7 @@ export type ProductCreateRequest = {
   payment_method: string;
   price: number;
   image_url: string | null;
+  display_image_url: string | null;
 };
 
 export type ProductCreateResponse = {
@@ -56,6 +57,7 @@ export type ProductGetResponse = {
   store_name?: string;
   category_id?: string;
   payment_method?: string;
+  display_image_url?: string | null;
 };
 
 export type ProductDeleteRequest = {

@@ -8,6 +8,7 @@ export class ProductValidation {
     payment_method: z.string().min(1),
     price: z.number().positive(),
     image_url: z.string().min(1),
+    display_image_url: z.string().min(1),
   });
 
   static UPDATE: ZodType = z.object({

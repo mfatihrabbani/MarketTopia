@@ -7,6 +7,7 @@ import cors from "cors";
 import session from "express-session";
 import path from "path";
 import uploadApi from "../routes/upload-api";
+import cookieParser from "cookie-parser";
 
 export const web = express();
 web.use("/static", express.static("./static"));
@@ -17,6 +18,7 @@ web.use(
     credentials: true,
   })
 );
+web.use(cookieParser());
 web.use(
   session({
     secret: "iniadalahtoken1", // Ganti dengan secret yang kuat

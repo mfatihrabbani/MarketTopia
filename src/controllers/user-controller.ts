@@ -25,6 +25,11 @@ export class UserController {
       const storeId = await UserService.getStoreByToken(token);
       req.session.user = token;
       req.session.store = storeId;
+      res.cookie(
+        "token",
+        { user: token, storeId: storeId },
+        { httpOnly: true, secure: true }
+      );
       res.redirect(process.env.BACK_URL!);
     } catch (error) {
       next(error);
@@ -55,9 +60,16 @@ export class UserController {
     next: NextFunction
   ) {
     try {
-      console.log("SESSION", req.session.user);
+      console.log("COOKIE", req.cookies.token.user);
       if (req.session.user) {
-        res.json({ user: req.session.user, storeId: req.session.store });
+        res
+          .status(200)
+          .json({ user: req.session.user, storeId: req.session.store });
+      } else if (req.cookies.token) {
+        res.status(200).json({
+          user: req.cookies.token.user,
+          storeId: req.cookies.token.storeId,
+        });
       } else {
         res.status(401).json({ message: "User not logged in" });
       }

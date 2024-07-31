@@ -1,6 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ResponseError } from "../errors/response-error";
+import logger from "../apps/winston";
 
 export const errorMiddleware = (
   error: any,
@@ -30,6 +31,7 @@ export const errorMiddleware = (
       });
     }
   } else {
+    logger.error(error.message);
     console.log("INI ERROR");
     console.log(error);
     res.status(500).json({
