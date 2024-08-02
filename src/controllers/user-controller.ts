@@ -2,13 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/user-service";
 import { UserRequest, UserSessionRequest } from "../models/users-model";
 import dotenv from "dotenv";
+import logger from "../apps/winston";
 dotenv.config();
 
 export class UserController {
-  static loginDiscord(req: Request, res: Response, next: NextFunction) {
+  static loginDiscord(req: any, res: Response, next: NextFunction) {
     try {
       const params = UserService.loginDiscord();
-      res.redirect(`https://discord.com/api/oauth2/authorize?${params}`);
+      req.session.oauthState = params.oauthState;
+      res.redirect(`https://discord.com/api/oauth2/authorize?${params.url}`);
     } catch (error) {
       next(error);
     }
@@ -21,6 +23,7 @@ export class UserController {
   ) {
     try {
       const code = req.query.code as string;
+      const state = req.query.state as string;
       const token = await UserService.callbackDiscordLogin(code);
       const storeId = await UserService.getStoreByToken(token);
       req.session.user = token;
@@ -28,9 +31,9 @@ export class UserController {
       res.cookie(
         "token",
         { user: token, storeId: storeId },
-        { httpOnly: true, secure: true }
+        { httpOnly: true, secure: true, sameSite: "none" }
       );
-      res.redirect(process.env.BACK_URL!);
+      res.redirect(process.env.BACK_URL! + "/?state=" + state);
     } catch (error) {
       next(error);
     }
@@ -60,7 +63,15 @@ export class UserController {
     next: NextFunction
   ) {
     try {
-      console.log("COOKIE", req.cookies.token.user);
+      console.log("state:", req.query.state);
+      if (req.session.oauthState !== req.query.state) {
+        res.status(400).json({
+          message: "Failed",
+        });
+        return;
+      }
+
+      logger.info("COOKIE", req.cookies.token.user);
       if (req.session.user) {
         res
           .status(200)
@@ -73,6 +84,7 @@ export class UserController {
       } else {
         res.status(401).json({ message: "User not logged in" });
       }
+      delete req.session;
     } catch (error) {
       next(error);
     }

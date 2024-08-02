@@ -31,7 +31,7 @@ export const errorMiddleware = (
       });
     }
   } else {
-    logger.error(error.message);
+    logger.error({ message: error.message, file: error.fileName });
     console.log("INI ERROR");
     console.log(error);
     res.status(500).json({

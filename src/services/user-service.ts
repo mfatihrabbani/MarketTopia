@@ -8,18 +8,27 @@ import { Validation } from "./validation";
 import { UserValidation } from "../validations/user-validation";
 import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 dotenv.config();
 export class UserService {
-  static loginDiscord(): String {
+  static generateRandomState() {
+    return crypto.randomBytes(16).toString("hex");
+  }
+  static loginDiscord(): { url: string; oauthState: string } {
+    const state = this.generateRandomState();
     const urlQuery = querystring.stringify({
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
       redirect_uri: process.env.REDIRECT_URI,
       response_type: "code",
       scope: "identify",
+      state: state,
     });
-    return urlQuery;
+    return {
+      url: urlQuery,
+      oauthState: state,
+    };
   }
 
   static async callbackDiscordLogin(code: string): Promise<string> {
@@ -68,6 +77,7 @@ export class UserService {
 
     console.log(newToken);
     console.log(process.env.JWT_SECRET_KEY);
+    console.log(user.data.id);
 
     const isUserExist = await prisma.user.findFirst({
       where: {
@@ -85,6 +95,7 @@ export class UserService {
         },
       });
     } else {
+      console.log("updaing token");
       await prisma.user.update({
         data: {
           token: newToken,

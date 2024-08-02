@@ -8,16 +8,12 @@ import session from "express-session";
 import path from "path";
 import uploadApi from "../routes/upload-api";
 import cookieParser from "cookie-parser";
+import { corsOptions } from "./cors";
 
 export const web = express();
 web.use("/static", express.static("./static"));
 
-web.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+web.use(cors(corsOptions));
 web.use(cookieParser());
 web.use(
   session({
