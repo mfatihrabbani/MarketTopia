@@ -155,6 +155,7 @@ export class UserService {
         store: {
           select: {
             store_id: true,
+            is_active: true,
           },
         },
       },
