@@ -22,3 +22,15 @@ export type GetUserInfoResponse = {
   growid: string;
   username: string;
 };
+
+export type UserSaveRequest = {
+  username: string;
+  token: string;
+  id: string;
+  avatar: string;
+};
+
+export type UserSaveResponse = {
+  token: string;
+  store_id: string | null;
+};

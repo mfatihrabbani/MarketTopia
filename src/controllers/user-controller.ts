@@ -89,4 +89,28 @@ export class UserController {
       next(error);
     }
   }
+
+  static async saveUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("HIT");
+      const response = await UserService.saveUser(req.body);
+      console.log(response);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getStoreId(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const response = await UserService.getStoreByToken(req.user?.token!);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

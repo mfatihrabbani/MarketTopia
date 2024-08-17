@@ -11,6 +11,8 @@ publicRouter.get("/auth/login", UserController.loginDiscord);
 publicRouter.get("/auth/callback", UserController.callbackDiscordLogin);
 publicRouter.get("/auth/session", UserController.getSession);
 
+publicRouter.post("/users/save", UserController.saveUser);
+
 publicRouter.get("/search/products", ProductController.seacrhProduct);
 publicRouter.get("/products/:productId", ProductController.getById);
 publicRouter.get("/products", ProductController.get);

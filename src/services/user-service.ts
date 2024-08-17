@@ -3,10 +3,14 @@ import querystring from "querystring";
 import axios from "axios";
 import prisma from "../apps/database";
 import { ResponseError } from "../errors/response-error";
-import { UpdateDepositGrowid } from "../models/users-model";
+import {
+  UpdateDepositGrowid,
+  UserSaveRequest,
+  UserSaveResponse,
+} from "../models/users-model";
 import { Validation } from "./validation";
 import { UserValidation } from "../validations/user-validation";
-import { User } from "@prisma/client";
+import { Store, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -142,7 +146,7 @@ export class UserService {
     };
   }
 
-  static async getStoreByToken(token: string): Promise<string> {
+  static async getStoreByToken(token: string): Promise<any> {
     const user = await prisma.user.findFirst({
       where: {
         token: token,
@@ -155,6 +159,58 @@ export class UserService {
         },
       },
     });
-    return user?.store?.store_id || "null";
+    return user?.store;
+  }
+
+  static async saveUser(user: UserSaveRequest): Promise<UserSaveResponse> {
+    const newUser = Validation.validate(UserValidation.SAVEUSER, user);
+
+    let existUser = await prisma.user.findFirst({
+      where: {
+        user_id: newUser.id,
+      },
+    });
+
+    if (existUser) {
+      existUser = await prisma.user.update({
+        data: {
+          username: newUser.username,
+          token: newUser.token,
+        },
+        where: {
+          user_id: newUser.id,
+        },
+      });
+    } else {
+      existUser = await prisma.user.create({
+        data: {
+          user_id: newUser.id,
+          username: newUser.username,
+          token: newUser.token,
+          avatar: newUser.avatar,
+        },
+      });
+      await prisma.store.create({
+        data: {
+          store_id: crypto.randomUUID(),
+          user_id: newUser.id,
+          store_name: `${newUser.username}'s store`,
+          private_key: crypto.randomUUID(),
+          is_active: false,
+          name: newUser.username,
+        },
+      });
+    }
+
+    const store = await prisma.store.findFirst({
+      where: {
+        user_id: newUser.id,
+      },
+    });
+
+    return {
+      token: existUser.token,
+      store_id: store?.store_id || null,
+    };
   }
 }

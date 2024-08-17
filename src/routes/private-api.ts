@@ -20,7 +20,7 @@ privateRouter.post("/orders", OrderController.create);
 privateRouter.get("/orders", OrderController.getByUser);
 
 privateRouter.patch("/users/deposits", UserController.updateDepositGrowid);
-
+privateRouter.get("/users/stores", UserController.getStoreId);
 privateRouter.post("/checkouts", OrderController.checkout);
 
 privateRouter.get("/orders/:orderId", OrderController.getOrderById);
